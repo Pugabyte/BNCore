@@ -6,13 +6,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.text.DecimalFormat;
-import java.util.Collections;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -38,13 +35,6 @@ public class HealthCommand extends CustomCommand {
 	@Path("target [number]")
 	void target(@Arg(permission = "group.staff") Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
-
-		Tasks.GlowTask.builder()
-				.duration(10 * 20)
-				.entity(target)
-				.color(GlowAPI.Color.RED)
-				.viewers(Collections.singletonList(player()))
-				.start();
 
 		if (health == null)
 			send(PREFIX + stripColor(target.getName()) + "'s health is " + nf.format(target.getHealth()));

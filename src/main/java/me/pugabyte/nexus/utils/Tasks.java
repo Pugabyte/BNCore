@@ -4,15 +4,11 @@ import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
 import me.lexikiq.HasPlayer;
-import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.Nexus;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -177,19 +173,6 @@ public class Tasks {
 		void stop() {
 			cancel(taskId);
 		}
-	}
-
-	public static class GlowTask {
-
-		@Builder(buildMethodName = "start")
-		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
-			List<Player> pViewers = PlayerUtils.getNonNullPlayers(viewers);
-			GlowAPI.setGlowing(entity, color, pViewers);
-			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, pViewers));
-			if (onComplete != null)
-				Tasks.wait(duration + 1, onComplete);
-		}
-
 	}
 
 	public static class ExpBarCountdown {

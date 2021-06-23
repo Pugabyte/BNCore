@@ -4,7 +4,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -19,7 +18,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,8 +64,6 @@ public class ProjectileListener implements Listener {
 				return;
 
 			ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
-			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 			// Stroke
 			ball.setCustomName(MiniGolfUtils.getStrokeString(user));

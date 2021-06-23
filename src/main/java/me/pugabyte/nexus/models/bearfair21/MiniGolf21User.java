@@ -19,7 +19,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Snowball;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,10 +85,6 @@ public class MiniGolf21User implements PlayerOwnedObject {
 
 	public ChatColor getChatColor() {
 		return miniGolfColor.getColorType().getChatColor();
-	}
-
-	public GlowAPI.Color getGlowColor() {
-		return this.miniGolfColor.getColorType().getGlowColor();
 	}
 
 	public void debug(boolean bool, String debug) {

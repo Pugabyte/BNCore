@@ -460,13 +460,6 @@
             <artifactId>PacketWrapper</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
-        <!-- GlowAPI -->
-        <dependency>
-            <groupId>org.inventivetalent</groupId>
-            <artifactId>glowapi</artifactId>
-            <version>1.4.10-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- AnvilGUI -->
         <dependency>
             <groupId>net.wesjd</groupId>

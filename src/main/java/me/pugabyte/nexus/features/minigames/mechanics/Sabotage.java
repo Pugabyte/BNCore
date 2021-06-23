@@ -75,7 +75,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -310,7 +309,6 @@ public class Sabotage extends TeamMechanic {
 		matchData.getVenters().remove(uuid);
 		matchData.getTasks().remove(uuid);
 		matchData.getPlayerColors().remove(uuid);
-		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMinigamer().getPlayer());
 	}
 
 	@Override
@@ -320,7 +318,6 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		match.hideBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, Chat.StaticChannel.MINIGAMES));
-		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMatch().getPlayers());
 	}
 
 	@Override

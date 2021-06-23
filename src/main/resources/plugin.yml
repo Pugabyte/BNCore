@@ -14,7 +14,6 @@ softdepend:
   - BlueMap
   - BuycraftX
   - Citizens
-  - GlowAPI
   - HeadDatabase
   - HolographicDisplays
   - LibsDisguises

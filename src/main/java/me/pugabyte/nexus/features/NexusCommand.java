@@ -112,7 +112,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -954,16 +953,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("sha1 <url>")
 	void sha1(String url) {
 		send(Utils.createSha1(url));
-	}
-
-	@Path("glow getColor <player>")
-	void getGlowColor(Player player) {
-		send(GlowAPI.getGlowColor(player, player()).name());
-	}
-
-	@Path("glow set <player> <color>")
-	void getGlowColor(Player player, GlowAPI.Color color) {
-		GlowAPI.setGlowing(player, color, player());
 	}
 
 	@Path("advancements [player] [page]")

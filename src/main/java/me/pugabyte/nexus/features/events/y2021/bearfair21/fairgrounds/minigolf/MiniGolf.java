@@ -48,7 +48,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -307,12 +306,6 @@ public class MiniGolf {
 						particleBuilder.spawn();
 					} catch (Exception ignored) {
 					}
-				}
-
-				// Rainbow Glow
-				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
-					if (updateRainbow)
-						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getOnlinePlayer());
 				}
 
 				Material _type = loc.getBlock().getType();

@@ -6,7 +6,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.whereis.WhereIs;
 import me.pugabyte.nexus.models.whereis.WhereIsService;
@@ -17,9 +16,6 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
-
-import java.util.Collections;
 
 @Permission("group.staff")
 public class WhereIsCommand extends CustomCommand {
@@ -46,13 +42,6 @@ public class WhereIsCommand extends CustomCommand {
 			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 
 		LocationUtils.lookAt(player(), playerArgLoc);
-
-		Tasks.GlowTask.builder()
-				.duration(10 * 20)
-				.entity(playerArg)
-				.color(GlowAPI.Color.RED)
-				.viewers(Collections.singletonList(player()))
-				.start();
 	}
 
 	@Path("glow threshold <threshold>")
@@ -122,11 +111,9 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void glow(Player glower, Player viewer) {
-		GlowAPI.setGlowing(glower, Nerd.of(glower).getRank().getGlowColor(), viewer);
 	}
 
 	private static void unglow(Player glower, Player viewer) {
-		GlowAPI.setGlowing(glower, false, viewer);
 	}
 
 }

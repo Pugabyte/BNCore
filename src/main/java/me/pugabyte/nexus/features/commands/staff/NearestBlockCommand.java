@@ -1,12 +1,10 @@
 package me.pugabyte.nexus.features.commands.staff;
 
-import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -14,11 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
-
-import java.util.Collections;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
@@ -69,18 +63,6 @@ public class NearestBlockCommand extends CustomCommand {
 
 					LocationUtils.lookAt(player(), block.getLocation());
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
-
-					Tasks.GlowTask.builder()
-							.duration(Time.SECOND.x(10))
-							.entity(fallingBlock)
-							.color(GlowAPI.Color.RED)
-							.viewers(Collections.singletonList(player()))
-							.onComplete(() -> {
-								fallingBlock.remove();
-								for (Player player : PlayerUtils.getOnlinePlayers(blockWorld))
-									player.sendBlockChange(blockLoc, block.getType().createBlockData());
-							})
-							.start();
 
 				} else
 					error(player(), StringUtils.camelCase(material.toString()) + " not found");

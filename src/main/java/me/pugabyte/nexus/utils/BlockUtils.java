@@ -4,7 +4,6 @@ import me.lexikiq.HasPlayer;
 import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
-import me.pugabyte.nexus.utils.Tasks.GlowTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,11 +14,9 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -232,14 +229,9 @@ public class BlockUtils {
 	}
 
 	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
-		glow(block, ticks, viewer, Color.RED);
 	}
 
-	public static void glow(Block block, int ticks, OptionalPlayer viewer, Color color) {
-		glow(block, ticks, Collections.singletonList(viewer), color);
-	}
-
-	public static void glow(Block block, int ticks, List<? extends OptionalPlayer> viewers, Color color) {
+	public static void glow(Block block, int ticks, List<? extends OptionalPlayer> viewers) {
 		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
 
 		Material material = block.getType();
@@ -253,17 +245,5 @@ public class BlockUtils {
 		fallingBlock.setGravity(false);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setVelocity(new Vector(0, 0, 0));
-
-		GlowTask.builder()
-				.duration(ticks)
-				.entity(fallingBlock)
-				.color(color)
-				.viewers(_viewers)
-				.onComplete(() -> {
-					fallingBlock.remove();
-					for (Player viewer : _viewers)
-						viewer.sendBlockChange(location, block.getType().createBlockData());
-				})
-				.start();
 	}
 }

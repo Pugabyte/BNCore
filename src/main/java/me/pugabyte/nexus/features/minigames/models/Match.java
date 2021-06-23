@@ -51,7 +51,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -201,7 +200,6 @@ public class Match implements ForwardingAudience {
 		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
-		GlowAPI.setGlowing(getPlayers(), GlowAPI.Color.NONE, minigamer.getPlayer());
 
 		if (minigamers.size() == 0)
 			end();
@@ -261,7 +259,6 @@ public class Match implements ForwardingAudience {
 		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
 
 		List<Player> players = getPlayers();
-		GlowAPI.setGlowing(players, GlowAPI.Color.NONE, players);
 
 		MatchManager.remove(this);
 	}
@@ -341,8 +338,6 @@ public class Match implements ForwardingAudience {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 				List<Player> otherPlayers = new ArrayList<>(PlayerUtils.getOnlinePlayers());
 				otherPlayers.removeAll(teamMembers);
-				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
-				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);
 				glowUpdates.remove(team, taskId.get());
 			}));
 			glowUpdates.put(team, taskId.get());

@@ -16,7 +16,6 @@ import net.luckperms.api.node.matcher.NodeMatcher;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -29,26 +28,24 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Rank implements IsColoredAndNamed {
-	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY),
-	MEMBER(ChatColor.of("#ffffff"), GlowAPI.Color.WHITE),
-	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED),
-	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD),
-	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW),
-	NOBLE(ChatColor.of("#abd923"), GlowAPI.Color.YELLOW),
-	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.DARK_GREEN),
-	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.GREEN),
-	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA),
-	MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA),
-	OPERATOR(ChatColor.of("#07a8a8"), GlowAPI.Color.DARK_AQUA),
-	ADMIN(ChatColor.of("#3080ff"), GlowAPI.Color.BLUE),
-	OWNER(ChatColor.of("#915bf5"), GlowAPI.Color.DARK_PURPLE),
+	GUEST(ChatColor.of("#aaaaaa")),
+	MEMBER(ChatColor.of("#ffffff")),
+	TRUSTED(ChatColor.of("#ff7069")),
+	ELITE(ChatColor.of("#f5a138")),
+	VETERAN(ChatColor.of("#ffff44")),
+	NOBLE(ChatColor.of("#abd923")),
+	BUILDER(ChatColor.of("#02883e")),
+	ARCHITECT(ChatColor.of("#02c93e")),
+	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0")),
+	MODERATOR(ChatColor.of("#4cc9f0")),
+	OPERATOR(ChatColor.of("#07a8a8")),
+	ADMIN(ChatColor.of("#3080ff")),
+	OWNER(ChatColor.of("#915bf5")),
 	;
 
 	@Getter
 	@NotNull
 	private final ChatColor chatColor;
-	@Getter
-	private final GlowAPI.Color glowColor;
 
 	public Color getDiscordColor() {
 		if (lt(TRUSTED))

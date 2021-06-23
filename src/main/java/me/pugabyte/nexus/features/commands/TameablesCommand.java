@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks.GlowTask;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -34,10 +32,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,12 +122,6 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Description("Make your nearby animals glow so you can find them")
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);
-		entities.forEach(entity -> GlowTask.builder()
-				.entity(entity)
-				.color(Color.RED)
-				.viewers(Collections.singletonList(player()))
-				.duration(Time.SECOND.x(10))
-				.start());
 		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : camelCase(entityType) + "s") + " &3in loaded chunks");
 	}
 

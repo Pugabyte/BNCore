@@ -35,7 +35,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -146,15 +145,9 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Route route = findRoute(player(), web, startNode, endNode, null, startNode, new Route(startNode), new HashSet<>());
 
 		Tasks.wait(wait += 10, () -> {
-			BlockUtils.glow(endNode.getPathLocation().getBlock(), ticks, player(), Color.BLUE);
-			BlockUtils.glow(startNode.getPathLocation().getBlock(), ticks, player(), Color.RED);
-
 			for (UUID nodeUuid : route.getNodeUuids()) {
 				Node node = web.getNodeById(nodeUuid);
 				Block block = node.getPathLocation().getBlock();
-
-				if (!route.getNodeUuids().getFirst().equals(nodeUuid) && !route.getNodeUuids().getLast().equals(nodeUuid))
-					BlockUtils.glow(block, ticks, player(), Color.WHITE);
 			}
 		});
 	}

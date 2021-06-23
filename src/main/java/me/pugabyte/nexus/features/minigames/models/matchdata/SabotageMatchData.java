@@ -62,7 +62,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -547,8 +546,6 @@ public class SabotageMatchData extends MatchData {
 				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
 			}
 		});
-		GlowAPI.setGlowing(disable, null, player);
-		GlowAPI.setGlowing(enable, GlowAPI.Color.WHITE, player);
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);

@@ -9,7 +9,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,48 +27,42 @@ public enum ColorType implements IsColored {
 			Color.WHITE,
 			ChatColor.WHITE,
 			ChatColor.WHITE,
-			DyeColor.WHITE,
-			GlowAPI.Color.WHITE
+			DyeColor.WHITE
 	),
 	LIGHT_GRAY(
 			"light gray",
 			Color.SILVER,
 			ChatColor.GRAY,
 			ChatColor.GRAY,
-			DyeColor.LIGHT_GRAY,
-			GlowAPI.Color.GRAY
+			DyeColor.LIGHT_GRAY
 	),
 	GRAY(
 			"gray",
 			Color.GRAY,
 			ChatColor.DARK_GRAY,
 			ChatColor.DARK_GRAY,
-			DyeColor.GRAY,
-			GlowAPI.Color.DARK_GRAY
+			DyeColor.GRAY
 	),
 	BLACK(
 			"black",
 			Color.BLACK,
 			ChatColor.BLACK,
 			ChatColor.BLACK,
-			DyeColor.BLACK,
-			GlowAPI.Color.BLACK
+			DyeColor.BLACK
 	),
 	BROWN(
 			"brown",
 			Color.fromRGB(139, 69, 42),
 			ChatColor.of(new java.awt.Color(139, 69, 42)),
 			ChatColor.GOLD,
-			DyeColor.BROWN,
-			null
+			DyeColor.BROWN
 	),
 	RED(
 			"red",
 			Color.RED,
 			ChatColor.DARK_RED,
 			ChatColor.DARK_RED,
-			DyeColor.RED,
-			GlowAPI.Color.DARK_RED
+			DyeColor.RED
 	),
 	LIGHT_RED(
 			"light red",
@@ -77,88 +70,77 @@ public enum ColorType implements IsColored {
 			ChatColor.RED,
 			ChatColor.RED,
 			null,
-			DyeColor.RED,
-			GlowAPI.Color.RED
+			DyeColor.RED
 	),
 	ORANGE(
 			"orange",
 			Color.ORANGE,
 			ChatColor.GOLD,
 			ChatColor.GOLD,
-			DyeColor.ORANGE,
-			GlowAPI.Color.GOLD
+			DyeColor.ORANGE
 	),
 	YELLOW(
 			"yellow",
 			Color.YELLOW,
 			ChatColor.YELLOW,
 			ChatColor.YELLOW,
-			DyeColor.YELLOW,
-			GlowAPI.Color.YELLOW
+			DyeColor.YELLOW
 	),
 	LIGHT_GREEN(
 			"lime",
 			Color.LIME,
 			ChatColor.GREEN,
 			ChatColor.GREEN,
-			DyeColor.LIME,
-			GlowAPI.Color.GREEN
+			DyeColor.LIME
 	),
 	GREEN(
 			"green",
 			Color.GREEN,
 			ChatColor.DARK_GREEN,
 			ChatColor.DARK_GREEN,
-			DyeColor.GREEN,
-			GlowAPI.Color.DARK_GREEN
+			DyeColor.GREEN
 	),
 	CYAN(
 			"cyan",
 			Color.TEAL,
 			ChatColor.DARK_AQUA,
 			ChatColor.DARK_AQUA,
-			DyeColor.CYAN,
-			GlowAPI.Color.DARK_AQUA
+			DyeColor.CYAN
 	),
 	LIGHT_BLUE(
 			"light blue",
 			Color.AQUA,
 			ChatColor.AQUA,
 			ChatColor.AQUA,
-			DyeColor.LIGHT_BLUE,
-			GlowAPI.Color.AQUA
+			DyeColor.LIGHT_BLUE
 	),
 	BLUE(
 			"blue",
 			Color.BLUE,
 			ChatColor.BLUE,
 			ChatColor.BLUE,
-			DyeColor.BLUE,
-			GlowAPI.Color.BLUE
+			DyeColor.BLUE
 	),
 	PURPLE(
 			"purple",
 			Color.PURPLE,
 			ChatColor.DARK_PURPLE,
 			ChatColor.DARK_PURPLE,
-			DyeColor.PURPLE,
-			GlowAPI.Color.DARK_PURPLE
+			DyeColor.PURPLE
 	),
 	MAGENTA(
 			"magenta",
 			Color.FUCHSIA,
 			ChatColor.of(new java.awt.Color(0xFF, 0, 0xFF)),
 			ChatColor.LIGHT_PURPLE,
-			DyeColor.MAGENTA,
-			GlowAPI.Color.PURPLE
+			DyeColor.MAGENTA
 	),
 	PINK(
 			"pink",
 			Color.fromRGB(255, 105, 180),
 			ChatColor.LIGHT_PURPLE,
 			ChatColor.LIGHT_PURPLE,
-			DyeColor.PINK,
-			GlowAPI.Color.PURPLE
+			DyeColor.PINK
 	);
 
 	private final @NotNull String name;
@@ -170,10 +152,9 @@ public enum ColorType implements IsColored {
 	private final @NotNull ChatColor vanillaChatColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
-	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
-		this(name, bukkitColor, chatColor, bukkitChatColor, dyeColor, dyeColor, glowColor);
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor, @NotNull DyeColor dyeColor) {
+		this(name, bukkitColor, chatColor, bukkitChatColor, dyeColor, dyeColor);
 	}
 
 	@Override
@@ -203,12 +184,6 @@ public enum ColorType implements IsColored {
 	public static ColorType of(@Nullable DyeColor dyeColor) {
 		if (dyeColor == null) return null;
 		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor() != null && colorType.getDyeColor().equals(dyeColor)).findFirst().orElse(null);
-	}
-
-	@Nullable
-	public static ColorType of(@Nullable GlowAPI.Color glowColor) {
-		if (glowColor == null) return null;
-		return Arrays.stream(values()).filter(colorType -> colorType.getGlowColor() != null && colorType.getGlowColor().equals(glowColor)).findFirst().orElse(null);
 	}
 
 	@Nullable

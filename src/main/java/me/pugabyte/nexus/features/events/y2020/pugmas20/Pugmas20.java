@@ -44,12 +44,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -290,18 +288,6 @@ public class Pugmas20 implements Listener {
 			fallingBlock.setVelocity(new Vector(0, 0, 0));
 
 			LocationUtils.lookAt(player, blockLoc);
-
-			Tasks.GlowTask.builder()
-					.duration(Time.SECOND.x(10))
-					.entity(fallingBlock)
-					.color(GlowAPI.Color.RED)
-					.viewers(Collections.singletonList(player))
-					.onComplete(() -> {
-						fallingBlock.remove();
-						for (Player _player : PlayerUtils.getOnlinePlayers(blockWorld))
-							_player.sendBlockChange(chestLoc, chest.getBlockData());
-					})
-					.start();
 		}
 	}
 

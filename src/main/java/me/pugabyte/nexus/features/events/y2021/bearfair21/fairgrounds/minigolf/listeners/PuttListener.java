@@ -5,7 +5,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -29,7 +28,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
 
@@ -208,8 +206,6 @@ public class PuttListener implements Listener {
 				ball.setCustomNameVisible(true);
 
 				user.setSnowball(ball);
-				if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();
