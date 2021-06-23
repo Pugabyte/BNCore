@@ -8,7 +8,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
@@ -51,14 +50,14 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 
 		Tasks.waitAsync(1, () -> {
 			fixGhostBlocks(player, event.getBlock().getLocation(), 3);
-			if (PlayerUtils.getPing(player) > 100)
+			if (player.getPing() > 100)
 				Tasks.waitAsync(3, () -> fixGhostBlocks(player, event.getBlock().getLocation(), 3));
 		});
 	}
 
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
-		if (PlayerUtils.getPing(event.getPlayer()) > 100)
+		if (event.getPlayer().getPing() > 100)
 			Tasks.waitAsync(3, () -> fixGhostBlocks(event.getPlayer(), event.getBlock().getLocation(), 2));
 	}
 

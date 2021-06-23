@@ -239,7 +239,7 @@ public class MiniGolf {
 				if (player.getLevel() != 0)
 					player.setLevel(0);
 
-				double amount = player.spigot().getPing() < 200 ? 0.04 : 0.02;
+				double amount = player.getPing() < 200 ? 0.04 : 0.02;
 				double exp = player.getExp() + amount;
 				if (exp > 1.00) {
 					exp = 0.00;

@@ -239,7 +239,7 @@ public class Koda {
 				if (!event.getChatter().isOnline())
 					break;
 
-				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
+				int ping = event.getChatter().getOnlinePlayer().getPing();
 				double tps = Bukkit.getTPS()[1];
 
 				if (ping > 200 && tps > 16)

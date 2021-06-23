@@ -85,7 +85,7 @@ public enum ScoreboardLine {
 	PING {
 		@Override
 		public String render(Player player) {
-			return "&3Ping: &e" + player.spigot().getPing() + "ms";
+			return "&3Ping: &e" + player.getPing() + "ms";
 		}
 	},
 

@@ -6,7 +6,6 @@ import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasPlayer;
@@ -271,12 +270,6 @@ public class PlayerUtils {
 			if (isSelf(_original, player)) return null;
 			return player.getLocation().distance(_original.getLocation());
 		});
-	}
-
-	@SneakyThrows
-	public static int getPing(HasPlayer player) {
-		Object entityPlayer = player.getPlayer().getClass().getMethod("getHandle").invoke(player);
-		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {

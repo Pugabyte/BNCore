@@ -95,7 +95,7 @@ public class OnlineCommand extends CustomCommand {
 		Player player = nerd.getOnlinePlayer();
 		Hours hours = new HoursService().get(player.getUniqueId());
 
-		int ping = PlayerUtils.getPing(player);
+		int ping = player.getPing();
 		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
 		WorldGroup world = WorldGroup.of(player);
 		ShopGroup shopGroup = ShopGroup.of(player);

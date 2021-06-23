@@ -34,7 +34,7 @@ public class AACNotifyCommand extends CustomCommand {
 		String name = player.getName();
 
 		WorldGroup worldGroup = WorldGroup.of(player);
-		int ping = player.spigot().getPing();
+		int ping = player.getPing();
 		double tps = Bukkit.getTPS()[1];
 
 		if (ping < 300 && tps >= 15) {
