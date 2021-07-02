@@ -4,19 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static eden.utils.StringUtils.camelCase;
+
 @AllArgsConstructor
 public enum BearFair21NPC {
-	// Merchants
+	// MAIN
+	//   MERCHANTS
 	ARCHITECT("Zach", 4109),
 	ARTIST("Sage", 2657),
 	BAKER("Rye", 2659),
@@ -29,13 +32,21 @@ public enum BearFair21NPC {
 	INVENTOR("Joshua", 2660),
 	PASTRY_CHEF("Maple", 2654),
 	SORCERER("Lucian", 2658),
-	// Quest Givers
-	MAYOR("John", 3838),
+	TRADER("Joe", 4206),
+	//   QUEST GIVERS
+	MAYOR("John", 3838) {
+		@Override
+		public @NotNull String getNpcNameAndJob() {
+			return camelCase(this) + " " + getNpcName();
+		}
+	},
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
 	AERONAUT("Skye", 4111),
-	// Misc
+	CURATOR("Curator", 4207),
+	QUEEN_BEE("Queen Bee", 4208),
+	//   MISC
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
 
@@ -46,6 +57,8 @@ public enum BearFair21NPC {
 	HEATHER("Heather", 4134),
 	MGN_CUSTOMER_1("Trent", 4135),
 	MGN_CUSTOMER_2("Mr. Fredrickson", 4136),
+	JAMES("James", 4167),
+
 	// PUGMAS
 	PUGMAS_MAYOR("Mayor", 4130),
 	GRINCH("Grinch", 4129),
@@ -64,12 +77,12 @@ public enum BearFair21NPC {
 	PUGMAS_VILLAGER_12("Villager", 4153),
 	PUGMAS_VILLAGER_13("Villager", 4154),
 	PUGMAS_VILLAGER_14("Villager", 4155),
-	// HALLOWEEN - MAIN
+
+	// HALLOWEEN
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
 	ANA("Ana", 4133),
-	// HALLOWEEN - MISC
-	FRANCISCO("Franciso", 4171),
+	FRANCISCO("Francisco", 4171),
 	ADRIAN("Adrian", 4174),
 	MAXIM("Maxim", 4173),
 	ISABELLA("Isabella", 4175),
@@ -80,11 +93,26 @@ public enum BearFair21NPC {
 	LUIS("Luis", 4180),
 	MARIANA("Mariana", 4181),
 	HALLOWEEN_MAYOR("Mayor", 4172),
+	RODRIGO("Rodrigo", 4185),
+	DANIEL("Daniel", 4187),
+	SANDRA("Sandra", 4188),
+	MARTHA("Martha", 4189),
+	PATRICIA("Patricia", 4190),
+	NINA("Nina", 4191),
+	RUBEN("Ruben", 4192),
+	CLARENCE("Clarence", 4193),
+	CARLA("Carla", 4194),
+	ANTONIO("Antonio", 4195),
+
 	// SDU
+	BRUCE("Bruce", 4209),
+	KYLIE("Kylie", 4210),
+	MEL_GIBSON("Mel Gibson", 4211),
+	MILO("Milo", 4213)
 	;
 
 	@Getter
-	private final String name;
+	private final String npcName;
 	@Getter
 	private final int id;
 
@@ -108,13 +136,26 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String npcJob = StringUtils.camelCase(this.name.toLowerCase()
-				.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
-				.replaceAll("[0-9]+", "")).trim();
+		String npcJob = getNpcJob();
 
-		if (npcJob.equalsIgnoreCase(name))
-			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), name));
+		if (npcJob.equalsIgnoreCase(npcName))
+			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), npcName));
 		else
-			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
+			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, npcName);
+	}
+
+	@NotNull
+	public String getNpcNameAndJob() {
+		final String job = getNpcJob();
+		if (npcName.equalsIgnoreCase(job))
+			return npcName;
+		return npcName + " the " + job;
+	}
+
+	@NotNull
+	public String getNpcJob() {
+		return camelCase(this.name().toLowerCase()
+			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
+			.replaceAll("[0-9]+", "")).trim();
 	}
 }

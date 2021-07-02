@@ -35,7 +35,7 @@ public enum QuestNPC {
 					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
 					service.save(user);
 					return Arrays.asList(
-							"Oh no.. What am I going to tell everyone. I can’t tell them that I have misplaced their pumpkins!",
+							"Oh no.. What am I going to tell everyone. I can't tell them that I have misplaced their pumpkins!",
 							"wait 100",
 							"I leave for 5 minutes and somebody stole them! Who would do such a thing?",
 							"wait 80",
@@ -250,7 +250,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							"Hello, welcome to the land of the Dead!",
 							"wait 60",
-							"O yes, that door. It doesn’t open. It has been locked for a long time now. Most of us cannot leave here anyways.",
+							"O yes, that door. It doesn't open. It has been locked for a long time now. Most of us cannot leave here anyways.",
 							"wait 100",
 							"If you want to open it, you will have to unlock it. I hear there are clues laying around in the land of the dead. Maybe you can find some clues on how to unlock it.",
 							"wait 100",
@@ -267,7 +267,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							"Hey look, you figured out how to open that gate!",
 							"wait 80",
-							"Well since you can get out of here now, don’t be afraid to come back and visit some time!"
+							"Well since you can get out of here now, don't be afraid to come back and visit some time!"
 					);
 			}
 			return new ArrayList<>();

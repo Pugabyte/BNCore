@@ -24,12 +24,12 @@ public class Quake extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.IRON_HOE);
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getAttacker() != null)
 			event.getAttacker().scored();
 		super.onDeath(event);

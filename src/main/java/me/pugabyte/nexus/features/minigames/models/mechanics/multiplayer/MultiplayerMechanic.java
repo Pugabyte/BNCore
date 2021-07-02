@@ -21,6 +21,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,14 +36,14 @@ import java.util.stream.Collectors;
 public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		event.getMinigamer().clearState();
 		onDeath(event.getMinigamer());
 
 		super.onDeath(event);
 	}
 
-	public void onDeath(Minigamer victim) {
+	public void onDeath(@NotNull Minigamer victim) {
 		if (victim.getLives() != 0) {
 			victim.died();
 			if (victim.getLives() == 0) {
@@ -59,7 +61,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	@Override
-	public void processJoin(Minigamer minigamer) {
+	public void processJoin(@NotNull Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		if (match.isStarted()) {
 			balance(minigamer);
@@ -70,8 +72,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	@Override
-	public void begin(MatchBeginEvent event) {
-		super.begin(event);
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
 
 		Match match = event.getMatch();
 		Arena arena = match.getArena();
@@ -88,16 +90,16 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		return false;
 	}
 
-	abstract public void nextTurn(Match match);
+	abstract public void nextTurn(@NotNull Match match);
 
-	public int getMultiplier(Match match, Minigamer minigamer) {
+	public int getMultiplier(@NotNull Match match, @NotNull Minigamer minigamer) {
 		int maxScore = Utils.getMax(match.getMinigamers(), Minigamer::getContributionScore).getInteger();
 		if (minigamer.getContributionScore() <= 0)
 			return 0;
 		return maxScore - minigamer.getContributionScore() + 1;
 	}
 
-	public void giveRewards(Match match) {
+	public final void giveRewards(@NotNull Match match) {
 		PerkOwnerService service = new PerkOwnerService();
 
 		if (RandomUtils.randomInt(1, 50) == 1) {
@@ -142,18 +144,23 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		giveRewards(event.getMatch());
 	}
 
 	// moved this here because it's used by a couple "team" games (juggernaut) and copy-pasting was kinda icky
-	protected final void announceTeamlessWinners(Match match) {
+	protected final void announceTeamlessWinners(@NotNull Match match) {
+		Minigames.broadcast(getTeamlessWinnersString(match));
+	}
+
+	@Nullable
+	protected JsonBuilder getTeamlessWinnersString(@NotNull Match match) {
 		Arena arena = match.getArena();
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
 		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
-		if (scores.size() == 0) return;
+		if (scores.size() == 0) return null;
 		int winningScore = getWinningScore(scores.values());
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
@@ -168,11 +175,10 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		builder.next(arena);
 		if (winningScore != 0)
 			builder.next(" (" + winningScore + ")");
-
-		Minigames.broadcast(builder);
+		return builder;
 	}
 
-	protected List<Minigamer> getWinners(int winningScore, Map<Minigamer, Integer> scores) {
+	protected @NotNull List<Minigamer> getWinners(int winningScore, @NotNull Map<Minigamer, Integer> scores) {
 		List<Minigamer> winners = new ArrayList<>();
 
 		for (Minigamer minigamer : scores.keySet()) {
@@ -184,7 +190,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		return winners;
 	}
 
-	protected TextComponent getWinnersComponent(List<? extends Named> winners) {
+	protected @NotNull TextComponent getWinnersComponent(@NotNull List<? extends Named> winners) {
 		TextComponent component = AdventureUtils.commaJoinText(winners.stream()
 				.map(named -> Component.text(named instanceof Nicknamed ? ((Nicknamed) named).getNickname() : named.getName(), named instanceof TextColor ? (TextColor) named : NamedTextColor.YELLOW))
 				.collect(Collectors.toList()));
@@ -194,7 +200,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			return component.append(Component.text(" have tied on "));
 	}
 
-	protected TextComponent getWinnersComponent(Named... components) {
+	protected @NotNull final TextComponent getWinnersComponent(@NotNull Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
 	}
 }

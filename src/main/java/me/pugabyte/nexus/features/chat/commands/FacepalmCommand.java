@@ -3,15 +3,15 @@ package me.pugabyte.nexus.features.chat.commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 
 public class FacepalmCommand extends CustomCommand {
 	private final Chatter chatter;
 
 	public FacepalmCommand(CommandEvent event) {
 		super(event);
-		chatter = new ChatService().get(player());
+		chatter = new ChatterService().get(player());
 	}
 
 	@Path

@@ -6,8 +6,8 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 
 @Aliases("r")
 public class ReplyCommand extends CustomCommand {
@@ -16,7 +16,7 @@ public class ReplyCommand extends CustomCommand {
 	public ReplyCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
-		chatter = new ChatService().get(player());
+		chatter = new ChatterService().get(player());
 	}
 
 	@Path("[message...]")

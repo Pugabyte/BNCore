@@ -11,8 +11,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirec
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.chat.Channel;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 
 import java.util.List;
@@ -26,18 +26,17 @@ public class ChannelCommand extends CustomCommand {
 	public ChannelCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
-		chatter = new ChatService().get(player());
+		chatter = new ChatterService().get(player());
 	}
 
 	@Path("<channel> [message...]")
 	void changeChannel(PublicChannel channel, String message) {
-		if (channel.equals(chatter.getActiveChannel()))
-			error("You are already in that channel");
-
-		if (isNullOrEmpty(message))
-			chatter.setActiveChannel(channel);
-		else
+		if (!isNullOrEmpty(message))
 			quickMessage(channel, message);
+		else if (channel.equals(chatter.getActiveChannel()))
+			error("You are already in that channel");
+		else
+			chatter.setActiveChannel(channel);
 	}
 
 	@Path("list [filter]")
@@ -76,7 +75,7 @@ public class ChannelCommand extends CustomCommand {
 	List<String> tabCompleteChannel(String filter) {
 		return ChatManager.getChannels().stream()
 				.filter(channel -> {
-					if (!new ChatService().get(player()).canJoin(channel))
+					if (!new ChatterService().get(player()).canJoin(channel))
 						return false;
 					return channel.getNickname().toLowerCase().startsWith(filter.toLowerCase()) ||
 							channel.getName().toLowerCase().startsWith(filter.toLowerCase());
@@ -87,7 +86,7 @@ public class ChannelCommand extends CustomCommand {
 
 	@ConverterFor(Chatter.class)
 	Chatter convertToChatter(String value) {
-		return new ChatService().get(convertToPlayer(value));
+		return new ChatterService().get(convertToPlayer(value));
 	}
 
 }

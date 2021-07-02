@@ -55,60 +55,63 @@ public class Collector {
 		return new ArrayList<>() {{
 			// Fishing Loot
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
-					.ingredient(FishingLoot.TIGER_TROUT.getItem()));
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.TIGER_TROUT.getGold() * 2))
+				.ingredient(FishingLoot.TIGER_TROUT.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.SEA_CUCUMBER.getGold() * 2))
+				.ingredient(FishingLoot.SEA_CUCUMBER.getItem()));
+			add(new TradeBuilder()
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.GLACIERFISH.getGold() * 2))
 					.ingredient(FishingLoot.GLACIERFISH.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.CRIMSONFISH.getGold() * 2))
 					.ingredient(FishingLoot.CRIMSONFISH.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.BLOBFISH.getGold() * 2))
 					.ingredient(FishingLoot.BLOBFISH.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.STONEFISH.getGold() * 2))
 					.ingredient(FishingLoot.STONEFISH.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.MIDNIGHT_CARP.getGold() * 2))
 					.ingredient(FishingLoot.MIDNIGHT_CARP.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.SUNFISH.getGold() * 2))
 					.ingredient(FishingLoot.SUNFISH.getItem()));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.NAUTILUS_SHELL.getGold() * 2))
 					.ingredient(FishingLoot.NAUTILUS_SHELL.getItem()));
 			// Food
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(3))
 					.ingredient(new ItemStack(Material.CAKE)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(3))
 					.ingredient(new ItemStack(Material.PUMPKIN_PIE)));
 			// Items
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(4))
 					.ingredient(new ItemStack(Material.BONE_BLOCK)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(6))
 					.ingredient(new ItemStack(Material.LEATHER_HORSE_ARMOR)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(5))
 					.ingredient(new ItemStack(Material.ANVIL)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(4))
 					.ingredient(new ItemStack(Material.CAMPFIRE)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldNugget.clone().amount(4))
 					.ingredient(new ItemStack(Material.CROSSBOW)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(5))
 					.ingredient(new ItemStack(Material.LECTERN)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(4))
 					.ingredient(new ItemStack(Material.BOOKSHELF)));
 			add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(1))
+				.result(Merchants.goldIngot.clone().amount(1))
 					.ingredient(new ItemStack(Material.BOOK)));
 		}};
 	}

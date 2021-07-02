@@ -29,6 +29,9 @@ public class CheckpointsCommand extends CustomCommand {
 
 	public CheckpointsCommand(CommandEvent event) {
 		super(event);
+		if (!isPlayerCommandEvent())
+			return;
+
 		Arena found = null;
 		try {
 			found = ArenaManager.getFromLocation(location());
@@ -46,7 +49,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 		this.arena = (CheckpointArena) found;
 
-		regionBase = arena.getMechanicType().name() + "_" + arena.getName() + "_checkpoint_";
+		regionBase = arena.getRegionBaseName() + "_checkpoint_";
 
 		weUtils = new WorldEditUtils(player());
 		wgUtils = new WorldGuardUtils(player());
@@ -63,7 +66,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("(set|add|create) <number>")
-	void addCheckpoint(@Arg(min = 1) int number) {
+	void set(@Arg(min = 1) int number) {
 		Region selection = weUtils.getPlayerSelection(player());
 		selection.expand(weUtils.toBlockVector3(Direction.UP.toVector().multiply(4)));
 		String id = regionBase + number;
@@ -77,7 +80,7 @@ public class CheckpointsCommand extends CustomCommand {
 	}
 
 	@Path("(remove|delete) <number>")
-	void removeCheckpoint(int number) {
+	void remove(int number) {
 		wgUtils.getManager().removeRegion(regionBase + number);
 		arena.removeCheckpoint(number);
 		send(PREFIX + "Removed checkpoint &e#" + number + " &3in &e" + arena.getDisplayName());

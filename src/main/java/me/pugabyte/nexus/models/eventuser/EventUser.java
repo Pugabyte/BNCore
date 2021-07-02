@@ -48,14 +48,14 @@ public class EventUser implements PlayerOwnedObject {
 		return tokensReceivedToday.getOrDefault(id, new HashMap<>()).getOrDefault(LocalDate.now(), 0);
 	}
 
-	public int checkDaily(String id, int amount, Map<String, Integer> maxes) {
+	public int getDailyTokensLeft(String id, int amount, Map<String, Integer> maxes) {
 		int max = maxes.getOrDefault(id, 0);
 		int tokensReceivedToday = getTokensReceivedToday(id);
 		return (tokensReceivedToday + amount) - max;
 	}
 
 	public void giveTokens(String id, int amount, Map<String, Integer> maxes) {
-		int excess = checkDaily(id, amount, maxes);
+		int excess = getDailyTokensLeft(id, amount, maxes);
 		if (excess > 0)
 			amount -= excess;
 

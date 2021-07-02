@@ -20,19 +20,6 @@ public class TestQuestUserCommand extends CustomCommand {
 		user = service.get(player());
 	}
 
-	@Path("clearCache")
-	void clearCache() {
-		service.clearCache();
-		send(PREFIX + "Cache cleared");
-	}
-
-	@Path("deleteAll")
-	void deleteAll() {
-		service.clearCache();
-		service.deleteAll();
-		service.clearCache();
-	}
-
 	@Path("getStage <quest>")
 	void getStage(Pugmas20Quest quest) {
 		send(PREFIX + "Stage for quest " + camelCase(quest) + ": " + camelCase(user.getQuestProgress(quest).getQuestStage()));

@@ -34,7 +34,7 @@ public final class Siege extends OneFlagCaptureTheFlag {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.GREEN_BANNER);
 	}
 
@@ -55,7 +55,7 @@ public final class Siege extends OneFlagCaptureTheFlag {
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		Map<Team, Integer> scores = match.getScores();
 
 		int winningScore = getWinningScore(scores.values());

@@ -67,14 +67,6 @@ public class Halloween20Command extends CustomCommand {
 			send("&3Spooky Buttons: &e" + user.getFoundButtons().size() + "/" + SoundButton.values().length);
 	}
 
-	@Path("debug [player]")
-	@Permission("group.admin")
-	void debug(@Arg("self") OfflinePlayer player) {
-		Halloween20Service service = new Halloween20Service();
-		Halloween20User user = service.get(player);
-		send(user.toString());
-	}
-
 	@Path("stats")
 	@Permission("group.admin")
 	void stats(@Arg("self") OfflinePlayer player) {

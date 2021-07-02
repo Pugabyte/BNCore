@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -181,8 +180,8 @@ public class ExchangeConfigProvider extends _ShopProvider {
 				((InventoryClickEvent) e.getEvent()).setCancelled(true);
 				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 					try {
-						ItemStack item = player.getItemOnCursor().clone();
-						if (!ShopUtils.isTradeable(item))
+						ItemStack item = player.getItemOnCursor();
+						if (!new ItemBuilder(item).isTradeable())
 							throw new InvalidInputException("You can not trade that item in shops");
 
 						itemStack.set(item);

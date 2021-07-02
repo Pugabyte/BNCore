@@ -17,12 +17,27 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.Cat.Type;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.Llama.Color;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.MushroomCow.Variant;
+import org.bukkit.entity.Panda;
 import org.bukkit.entity.Panda.Gene;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.TraderLlama;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
 
@@ -121,6 +136,12 @@ public enum MobHeadType {
 	private ItemStack generic;
 	@Setter
 	private double chance;
+
+	public ItemStack getGeneric() {
+		if (generic == null)
+			return null;
+		return generic.clone();
+	}
 
 	@Getter
 	private static final Set<ItemStack> allSkulls = new HashSet<>();

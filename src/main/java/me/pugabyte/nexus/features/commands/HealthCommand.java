@@ -26,7 +26,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("<player> [number]")
-	void health(@Arg("self") Player player, @Arg(permission = "group.staff") Double health) {
+	void health(@Arg("self") Player player, @Arg(permission = "group.staff", min = 0.0, max = 20.0) Double health) {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is " + nf.format(player.getHealth()));
 		else {
@@ -36,15 +36,15 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("target [number]")
-	void target(@Arg(permission = "group.staff") Double health) {
+	void target(@Arg(permission = "group.staff", min = 0.0, max = 20.0) Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
 		Tasks.GlowTask.builder()
-				.duration(10 * 20)
-				.entity(target)
-				.color(GlowAPI.Color.RED)
-				.viewers(Collections.singletonList(player()))
-				.start();
+			.duration(10 * 20)
+			.entity(target)
+			.color(GlowAPI.Color.RED)
+			.viewers(Collections.singletonList(player()))
+			.start();
 
 		if (health == null)
 			send(PREFIX + stripColor(target.getName()) + "'s health is " + nf.format(target.getHealth()));

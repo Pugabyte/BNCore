@@ -12,9 +12,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
+import me.pugabyte.nexus.models.radio.RadioConfig.RadioSong;
+import me.pugabyte.nexus.models.radio.RadioConfig.RadioType;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
-import me.pugabyte.nexus.models.radio.RadioSong;
-import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.features.radio.RadioUtils.addPlayer;
 import static me.pugabyte.nexus.features.radio.RadioUtils.getRadios;
@@ -39,12 +40,12 @@ import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
 // TODO: fix bugs when switching between local and server radios
 // TODO: display what song of the playlist is currently player
-// TODO: re-add players to radios they were previously listening to over reload/restart
 
 public class RadioFeature extends Feature {
 
 	public static final String PREFIX = StringUtils.getPrefix("Radio");
 	private static final File songsDirectory = Nexus.getFile("songs");
+	private static final RadioUserService userService = new RadioUserService();
 
 	@Getter
 	private static List<RadioSong> allSongs;
@@ -54,10 +55,20 @@ public class RadioFeature extends Feature {
 		allSongs = new ArrayList<>();
 		new Listeners();
 
-		for (File file : songsDirectory.listFiles())
-			allSongs.add(new RadioSong(file.getName(), file));
+		File[] songs = songsDirectory.listFiles();
+		if (songs != null) {
+			for (File file : songs)
+				allSongs.add(new RadioSong(file.getName(), file));
+		}
 
 		setupRadios();
+
+		// Rejoin radios
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
+			RadioUser user = userService.get(player);
+			if (user.getLastServerRadio() != null)
+				RadioUtils.addPlayer(player, user.getLastServerRadio());
+		}
 
 		// Radio Particles Task
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
@@ -110,9 +121,19 @@ public class RadioFeature extends Feature {
 	public void onStop() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig radioConfig = configService.get0();
+		RadioUserService userService = new RadioUserService();
+		RadioUser user;
 		for (Radio radio : radioConfig.getRadios()) {
-			if (radio.getSongPlayer() != null)
+			if (radio.getSongPlayer() != null) {
+				SongPlayer songPlayer = radio.getSongPlayer();
+				for (UUID uuid : songPlayer.getPlayerUUIDs()) {
+					user = userService.get(uuid);
+					user.setServerRadioId(radio.getId());
+					userService.save(user);
+				}
+
 				removeSongPlayer(radio.getSongPlayer());
+			}
 		}
 		configService.save(radioConfig);
 	}

@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -13,6 +14,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Aliases("nearby")
@@ -25,8 +27,12 @@ public class NearCommand extends CustomCommand {
 
 	@Path("[player]")
 	void run(@Arg(value = "self", permission = "group.staff") Player player) {
+		if (PlayerManager.get(player).isPlaying())
+			error("This command cannot be used during Minigames");
+
+		UUID uuid = player.getUniqueId();
 		List<Player> nearby = PlayerUtils.getOnlinePlayers(player.getWorld()).stream()
-				.filter(_player -> !isSelf(_player)
+				.filter(_player -> !uuid.equals(_player.getUniqueId())
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
 						 && (!isPlayer() || PlayerUtils.canSee(player(), _player)))
 				.collect(Collectors.toList());

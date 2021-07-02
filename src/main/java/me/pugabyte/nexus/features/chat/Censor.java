@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
-import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.punishments.Punishment;
@@ -90,7 +90,7 @@ public class Censor {
 	}
 
 	public static boolean isCensored(Player player, String input) {
-		ChatEvent chatEvent = new PublicChatEvent(new ChatService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+		ChatEvent chatEvent = new PublicChatEvent(new ChatterService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
 		Censor.censor(chatEvent);
 		return chatEvent.isBad() || chatEvent.isCancelled();
 	}

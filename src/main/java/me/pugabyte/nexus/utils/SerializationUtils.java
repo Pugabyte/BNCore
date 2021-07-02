@@ -2,6 +2,10 @@ package me.pugabyte.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,6 +14,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -249,6 +254,15 @@ public class SerializationUtils {
 					Float.parseFloat(parts.get(4)),
 					Float.parseFloat(parts.get(5))
 			);
+		}
+
+		public static class LocationGsonSerializer implements JsonSerializer<Location> {
+
+			@Override
+			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
+				return new JsonPrimitive(StringUtils.getShortishLocationString(location));
+			}
+
 		}
 
 	}

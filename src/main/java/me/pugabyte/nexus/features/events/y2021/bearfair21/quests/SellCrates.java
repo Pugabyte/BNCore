@@ -68,7 +68,7 @@ public class SellCrates implements Listener {
 
 		Player player = (Player) event.getPlayer();
 		if (crateType.contains("fishing"))
-			tradeBuilders = FishingLoot.getTrades(player);
+			tradeBuilders = FishingLoot.getTrades();
 		else if (crateType.contains("farming"))
 			tradeBuilders = FarmingLoot.getTrades();
 		else if (crateType.contains("dyes"))

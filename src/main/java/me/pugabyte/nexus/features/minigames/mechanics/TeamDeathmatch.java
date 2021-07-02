@@ -18,7 +18,7 @@ public final class TeamDeathmatch extends DeathmatchMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.LEATHER_HELMET);
 	}
 

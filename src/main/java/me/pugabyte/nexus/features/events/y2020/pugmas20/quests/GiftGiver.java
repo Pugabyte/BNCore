@@ -9,7 +9,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
@@ -106,7 +106,7 @@ public class GiftGiver implements Listener {
 		inventory.setContents(contents);
 
 		player.openInventory(inventory);
-		SoundUtils.playSound(player, Sound.BLOCK_CHEST_OPEN);
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).play();
 		player.getInventory().removeItem(gift);
 	}
 

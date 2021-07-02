@@ -15,7 +15,7 @@ import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -125,7 +125,7 @@ public class Halloween20 implements Listener {
 		SoundButton button = SoundButton.getByLocation(event.getClickedBlock().getLocation());
 		if (button == null) return;
 
-		SoundUtils.playSound(event.getPlayer(), button.getSound(), 1, 1);
+		new SoundBuilder(button.getSound()).receiver(event.getPlayer()).play();
 
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());

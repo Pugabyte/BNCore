@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -107,7 +108,7 @@ public class ReflectionGame {
 
 		AtomicReference<Color> laserColor = new AtomicReference<>(getMinigolfUserColor(player));
 		AtomicInteger reflections = new AtomicInteger(0);
-		BearFair21.getWorld().playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 2F, 1F);
+		new SoundBuilder(Sound.BLOCK_BEACON_ACTIVATE).location(laserStart).volume(2.0).play();
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {
@@ -187,7 +188,7 @@ public class ReflectionGame {
 		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Collection<Player> players = BearFair21.getWGUtils().getPlayersInRegion(gameRg);
 			for (Player player : players)
-				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
+				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
 		});
 	}
 
@@ -199,7 +200,7 @@ public class ReflectionGame {
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 
-		BearFair21.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
+		new SoundBuilder(Sound.BLOCK_BEACON_DEACTIVATE).location(center).play();
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
 

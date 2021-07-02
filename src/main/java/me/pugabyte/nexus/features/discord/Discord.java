@@ -214,7 +214,7 @@ public class Discord extends Feature {
 	private static String getBridgeTopic() {
 		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> !PlayerUtils.isVanished(player))
-				.sorted(Comparator.comparing(Nickname::of))
+				.sorted(Comparator.comparing(player -> Nickname.of(player).toLowerCase()))
 				.collect(Collectors.toList());
 
 		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.chat;
 
+import eden.utils.Utils;
 import lombok.Data;
 import lombok.ToString;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -16,19 +17,20 @@ import java.util.stream.Collectors;
 @Data
 public class PrivateChannel implements Channel {
 	@ToString.Exclude
-	// Not Chatter because serialization stackoverflow
 	private Set<UUID> recipients = new HashSet<>();
 
 	public PrivateChannel(List<String> recipients) {
-		this.recipients = recipients.stream().map(UUID::fromString).collect(Collectors.toSet());
+		if (!Utils.isNullOrEmpty(recipients))
+			this.recipients = recipients.stream().map(UUID::fromString).collect(Collectors.toSet());
+	}
+
+	public PrivateChannel(Set<Chatter> recipients) {
+		if (!Utils.isNullOrEmpty(recipients))
+			this.recipients = recipients.stream().map(Chatter::getUuid).collect(Collectors.toSet());
 	}
 
 	public PrivateChannel(Chatter... recipients) {
 		this.recipients = Arrays.stream(recipients).map(Chatter::getUuid).collect(Collectors.toSet());
-	}
-
-	public PrivateChannel(Set<Chatter> recipients) {
-		this.recipients = recipients.stream().map(Chatter::getUuid).collect(Collectors.toSet());
 	}
 
 	public Set<Chatter> getRecipients() {
@@ -37,7 +39,7 @@ public class PrivateChannel implements Channel {
 
 	@Override
 	public Set<Chatter> getRecipients(Chatter chatter) {
-		return recipients.stream().map(uuid -> new ChatService().get(uuid)).collect(Collectors.toSet());
+		return recipients.stream().map(uuid -> new ChatterService().get(uuid)).collect(Collectors.toSet());
 	}
 
 	@ToString.Include
@@ -50,7 +52,7 @@ public class PrivateChannel implements Channel {
 	public Set<Chatter> getOthers(Chatter chatter) {
 		return recipients.stream()
 				.filter(uuid -> !uuid.equals(chatter.getUuid()))
-				.map(uuid -> new ChatService().get(uuid))
+				.map(uuid -> new ChatterService().get(uuid))
 				.collect(Collectors.toSet());
 	}
 

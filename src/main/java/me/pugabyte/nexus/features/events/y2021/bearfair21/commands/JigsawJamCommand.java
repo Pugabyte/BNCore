@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -30,10 +32,12 @@ import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.Utils.MapRotation;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -49,12 +53,15 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -67,12 +74,30 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	private static final String WORLD = "gameworld";
 	private static final String SCHEMATIC = "jigsawjam4";
 	private static final int LENGTH = 9, HEIGHT = 5;
+	private static final int firstX = 1952, firstY = 4, firstZ = -64;
+	private static final int separatorZ = -25, arenas = 20;
 
 	private final JigsawJamService service = new JigsawJamService();
-	private JigsawJammer jammer;
+	private WorldGuardUtils worldGuardUtils;
 
 	public JigsawJamCommand(@NonNull CommandEvent event) {
 		super(event);
+		worldGuardUtils = new WorldGuardUtils(getWorld());
+	}
+
+	@Path
+	void warp() {
+		final Location first = new Location(getWorld(), firstX, firstY, firstZ);
+
+		List<Location> locations = getLocations(first);
+		List<Location> filtered = filter(locations);
+		Location result = choose(locations, filtered);
+
+		if (result == null)
+			error("Could not find an arena to teleport to");
+
+		result.setYaw(270);
+		player().teleportAsync(LocationUtils.getCenteredLocation(result), TeleportCause.COMMAND);
 	}
 
 	@Path("validate")
@@ -107,24 +132,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
 
-	@Async
-	@Confirm
-	@Path("deleteAll")
-	@Permission("group.seniorstaff")
-	void deleteAll() {
-		service.deleteAll();
-		send(PREFIX + "Reset all");
-	}
-
-	@Path("debug [player]")
-	@Permission("group.seniorstaff")
-	void debug(@Arg("self") OfflinePlayer player) {
-		send(service.get(player).toString());
-	}
-
 	@Path("time [player]")
 	void time(@Arg("self") OfflinePlayer player) {
-		jammer = service.get(player);
+		JigsawJammer jammer = service.get(player);
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 
@@ -136,13 +146,53 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		runCommand("mcmd warp minigames ;; wait 7 ;; back");
 	}
 
-	private static final int INTERVAL = 10;
+	@NotNull
+	private ArrayList<Location> getLocations(Location first) {
+		return new ArrayList<>() {{
+			for (int i = 0; i < arenas; i++)
+				add(first.clone().add(0, 0, separatorZ * i));
+		}};
+	}
+
+	@NotNull
+	private ArrayList<Location> filter(List<Location> locations) {
+		return new ArrayList<>() {{
+			for (Location next : locations) {
+				final Set<ProtectedRegion> regions = worldGuardUtils.getRegionsLikeAt("jigsawjam_\\d+", next);
+				if (regions.isEmpty()) {
+					Nexus.warn("Could not find Jigsaw Jam region at " + StringUtils.getCoordinateString(next));
+					add(next);
+				} else {
+					var players = worldGuardUtils.getPlayersInRegion(regions.iterator().next());
+					if (players.isEmpty())
+						add(next);
+				}
+			}
+		}};
+	}
+
+	private Location choose(List<Location> locations, List<Location> filtered) {
+		Location result;
+		if (filtered.isEmpty()) {
+			Nexus.warn("Could not find an empty Jigsaw Jam arena, choosing randomly");
+			result = RandomUtils.randomElement(locations);
+		} else {
+			result = RandomUtils.randomElement(filtered);
+		}
+		return result;
+	}
+
+	private static World getWorld() {
+		return Bukkit.getWorld(WORLD);
+	}
+
+	private static final int INTERVAL = 5;
 
 	static {
-		Tasks.repeat(INTERVAL, INTERVAL, () -> PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> player.getWorld().getName().equals(WORLD))
+		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(getWorld());
+		Tasks.repeat(INTERVAL, INTERVAL, () -> PlayerUtils.getOnlinePlayers(getWorld()).stream()
 				.filter(player -> !AFK.get(player).isAfk())
-				.filter(player -> new WorldGuardUtils(player).getRegionNamesAt(player.getLocation()).contains("jigsawjam"))
+				.filter(player -> worldGuardUtils.isInRegion(player.getLocation(), "jigsawjam"))
 				.map(player -> new JigsawJamService().get(player))
 				.filter(JigsawJammer::isPlaying)
 				.forEach(jammer -> {
@@ -407,9 +457,8 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (correct == totalMaps) {
 			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
 
-
 			if (!jammer.hasPlayed()) {
-				BearFair21.givePoints(jammer.getPlayer(), 50);
+				BearFair21.giveTokens(jammer.getPlayer(), 50);
 				jammer.hasPlayed(true);
 				new JigsawJamService().save(jammer);
 			}

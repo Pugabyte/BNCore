@@ -64,13 +64,6 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 		send(updateAll(caches));
 	}
 
-	@Async
-	@Path("deleteAll")
-	void deleteAll() {
-		service.deleteAll();
-		send(PREFIX + "Cleared database");
-	}
-
 	@NotNull
 	private static String updateAll(List<SkinCache> online) {
 		AtomicInteger updated = new AtomicInteger();

@@ -21,6 +21,7 @@ import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
@@ -57,7 +58,6 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugm
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -229,7 +229,7 @@ public class TheMines implements Listener {
 
 		player.getInventory().getItemInMainHand().addEnchantment(Enchantment.DIG_SPEED, 4);
 
-		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
+		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		ItemStack itemStack = oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre();
 		PlayerUtils.giveItem(player, itemStack);
 
@@ -258,11 +258,11 @@ public class TheMines implements Listener {
 		if (block.getType() != Material.GRAVEL)
 			return;
 
-		playSound(player, Sound.ENTITY_HORSE_SADDLE, .5F, .5F);
-		playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
+		new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).receiver(player).volume(.5F).pitch(.5F).play();
+		new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).receiver(player).volume(.5F).pitch(.5F).play();
 		Tasks.wait(5, () -> {
-			playSound(player, Sound.ENTITY_HORSE_SADDLE, .5F, .5F);
-			playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
+			new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).receiver(player).volume(.5F).pitch(.5F).play();
+			new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).receiver(player).volume(.5F).pitch(.5F).play();
 		});
 
 		if (RandomUtils.chanceOf(20))

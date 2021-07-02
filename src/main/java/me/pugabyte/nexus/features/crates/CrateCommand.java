@@ -11,18 +11,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Name;
+import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
 
 import java.util.Arrays;
-
-import static me.pugabyte.nexus.utils.SoundUtils.getPitch;
 
 @Aliases("crates")
 public class CrateCommand extends CustomCommand {
@@ -63,59 +58,7 @@ public class CrateCommand extends CustomCommand {
 		Location location = LocationUtils.getCenteredLocation(new Location(Bukkit.getWorld("buildadmin"), -434.00, 4.00, 2410.00, .00F, .00F));
 		CrateType.VOTE.getCrateClass().playAnimation(location).thenAccept(location1 ->
 				CrateType.VOTE.getCrateClass().playFinalParticle(location1));
-		int wait = 3;
-		float volume = .6F;
-		World w = location.getWorld();
-		Tasks.wait(wait += 0, () -> {
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .6F, getPitch(3));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(3));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
-		});
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(3)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(6)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
-		Tasks.wait(wait += 3, () -> {
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(5));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(12));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
-		});
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(8)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
-		Tasks.wait(wait += 3, () -> {
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(14));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
-		});
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(10)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
-		Tasks.wait(wait += 3, () -> {
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(16));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
-		});
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(12)));
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(13)));
-		Tasks.wait(wait += 3, () -> {
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(17));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(8));
-			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
-		});
-		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(18)));
-		Tasks.wait(wait += 2, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(20)));
-		Tasks.wait(wait += 2, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(25)));
+		Jingle.CRATE_OPEN.play(player());
 	}
 
 	@Path("edit [filter]")

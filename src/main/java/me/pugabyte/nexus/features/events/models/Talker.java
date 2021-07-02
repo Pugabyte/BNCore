@@ -1,8 +1,12 @@
 package me.pugabyte.nexus.features.events.models;
 
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
+import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
+import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -12,9 +16,11 @@ import org.bukkit.entity.Player;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.SKIP_WAITS;
 
 public class Talker {
 	/**
@@ -41,9 +47,10 @@ public class Talker {
 
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
-			if (line.toLowerCase().matches("^wait \\d+$"))
-				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
-			else {
+			if (line.toLowerCase().matches("^wait \\d+$")) {
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
+					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
+			} else {
 				line = line.replaceAll("<player>", playerName);
 				final String npcName;
 				if (line.contains("<self> ")) {
@@ -66,21 +73,38 @@ public class Talker {
 	 *
 	 * @param player player to send to
 	 * @param talker NPC to send from
+	 * @return CompletableFuture
+	 */
+	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker) {
+		return runScript(player, talker, talker.getScript(player));
+	}
+
+	/**
+	 * Sends a script to a player from a talking NPC.
+	 *
+	 * @param player player to send to
+	 * @param talker NPC to send from
 	 * @param script script to send
 	 * @return CompletableFuture
 	 */
 	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker, List<String> script) {
-		AtomicBoolean leftGlobal = new AtomicBoolean(false);
+		AtomicReference<Channel> previousChannel = new AtomicReference<>();
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		if (script == null || script.isEmpty()) {
 			future.complete(true);
 			return future;
 		}
 
-		final Chatter chatter = new ChatService().get(player);
+		final Chatter chatter = new ChatterService().get(player);
 		Consumer<Boolean> complete = bool -> {
-			if (leftGlobal.get())
-				chatter.join(StaticChannel.GLOBAL.getChannel());
+			Channel channel = previousChannel.get();
+			if (channel != null) {
+				PublicChannel global = StaticChannel.GLOBAL.getChannel();
+				if (channel.equals(global) && !chatter.getActiveChannel().equals(channel))
+					chatter.setActiveChannel(channel);
+				else
+					chatter.join(global);
+			}
 
 			future.complete(bool);
 		};
@@ -95,14 +119,15 @@ public class Talker {
 				Tasks.wait(wait.get(), () -> complete.accept(false));
 
 			} else if (line.toLowerCase().matches("^wait \\d+$")) {
-				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
+					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
 					Tasks.wait(wait.get(), () -> complete.accept(true));
 
 			} else {
-				if (!leftGlobal.get()) {
+				if (script.size() > 3 && previousChannel.get() == null) {
+					previousChannel.set(chatter.getActiveChannel());
 					chatter.leave(StaticChannel.GLOBAL.getChannel());
-					leftGlobal.set(true);
 				}
 
 				line = line.replaceAll("<player>", playerName);

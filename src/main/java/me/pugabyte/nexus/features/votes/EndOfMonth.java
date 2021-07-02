@@ -174,7 +174,7 @@ public class EndOfMonth {
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 
-			if (total > 2000)
+			if (total > Votes.GOAL)
 				msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";
 			else
 				msg += "**Unfortunately, the server wide goal was not reached. Get voting this month!**";

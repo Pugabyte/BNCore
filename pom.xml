@@ -205,13 +205,12 @@
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
-            <scope>provided</scope>
         </dependency>
         <!-- EdenAPI -->
         <dependency>
             <groupId>me.pugabyte</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.4</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>

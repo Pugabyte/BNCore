@@ -239,7 +239,7 @@ public class StringUtils extends eden.utils.StringUtils {
 		if (style == ProgressBarStyle.COUNT)
 			result += " &f" + progress + "/" + goal;
 		if (style == ProgressBarStyle.PERCENT)
-			result += " &f" + Math.floor(percent * 100);
+			result += " &f" + Math.floor(percent * 100) + "%";
 
 		return result;
 	}
@@ -285,6 +285,10 @@ public class StringUtils extends eden.utils.StringUtils {
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");
+		else if (world.equals("bearfair21"))
+			return "Bear Fair 21";
+		else if (world.equals("uhc"))
+			return "UHC";
 		return camelCase(world);
 	}
 
@@ -299,6 +303,10 @@ public class StringUtils extends eden.utils.StringUtils {
 
 	public static String getShortLocationString(Location loc) {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
+	}
+
+	public static String getShortishLocationString(Location loc) {
+		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch()) + " " + loc.getWorld().getName();
 	}
 
 	public static String getCoordinateString(Location loc) {

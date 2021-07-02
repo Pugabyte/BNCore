@@ -17,7 +17,7 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import me.pugabyte.nexus.models.discord.DiscordUser;
@@ -46,19 +46,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
-	public static final Set<String> TEAM_VOICE_CHANNELS;
-	public static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
-	private static final Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
-
-	static {
-		Set<String> channels = new HashSet<>();
-		channels.add(DiscordId.VoiceChannel.RED.getId());
-		channels.add(DiscordId.VoiceChannel.BLUE.getId());
-		channels.add(DiscordId.VoiceChannel.GREEN.getId());
-		channels.add(DiscordId.VoiceChannel.YELLOW.getId());
-		channels.add(DiscordId.VoiceChannel.WHITE.getId());
-		TEAM_VOICE_CHANNELS = ImmutableSet.copyOf(channels);
-	}
+	public static final @NotNull Set<String> TEAM_VOICE_CHANNELS = Set.of(
+		DiscordId.VoiceChannel.RED.getId(),
+		DiscordId.VoiceChannel.BLUE.getId(),
+		DiscordId.VoiceChannel.GREEN.getId(),
+		DiscordId.VoiceChannel.YELLOW.getId(),
+		DiscordId.VoiceChannel.WHITE.getId()
+	);
+	public static final @NotNull Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
+	private static final @NotNull Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
 
 	// TODO: add spectators to all team channels (read-only)?
 	// TODO: spectator chat? (git#26)
@@ -97,7 +93,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return member;
 	}
 
-	public void joinTeamChannel(Team team, List<Minigamer> teamMembers) {
+	public final void joinTeamChannel(@Nullable Team team, @NotNull List<Minigamer> teamMembers) {
 		if (!usesTeamChannels()) return;
 		if (teamMembers.isEmpty()) return;
 		if (team == null) {
@@ -149,15 +145,15 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		});
 	}
 
-	public void joinTeamChannel(Minigamer minigamer) {
+	public final void joinTeamChannel(@NotNull Minigamer minigamer) {
 		joinTeamChannel(minigamer.getTeam(), Collections.singletonList(minigamer));
 	}
 
-	public void joinTeamChannel(Team team, Match match) {
+	public final void joinTeamChannel(@NotNull Team team, @NotNull Match match) {
 		joinTeamChannel(team, team.getAliveMinigamers(match));
 	}
 
-	public void leaveTeamVoiceChannel(Minigamer minigamer) {
+	public final void leaveTeamVoiceChannel(@NotNull Minigamer minigamer) {
 		if (!usesTeamChannels()) return;
 
 		Member member = getVoiceChannelMember(minigamer);
@@ -170,12 +166,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			minigamer.getPlayer().sendMessage(RETURN_VC);
 	}
 
-	public void leaveTeamChannel(Minigamer minigamer) {
+	public final void leaveTeamChannel(@NotNull Minigamer minigamer) {
 		leaveTeamVoiceChannel(minigamer);
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		event.getMatch().getMinigamers().forEach(this::leaveTeamChannel);
 		super.onEnd(event);
 	}
@@ -190,7 +186,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		Arena arena = match.getArena();
 		Map<Team, Integer> scores = match.getScores();
 
@@ -212,7 +208,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Minigames.broadcast(builder);
 	}
 
-	protected List<Team> getWinningTeams(int winningScore, Map<Team, Integer> scores) {
+	protected @NotNull List<Team> getWinningTeams(int winningScore, @NotNull Map<Team, Integer> scores) {
 		List<Team> winners = new ArrayList<>();
 
 		for (Team team : scores.keySet())
@@ -222,7 +218,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return winners;
 	}
 
-	private String getScoreList(Map<ChatColor, Integer> scores) {
+	private @NotNull String getScoreList(@NotNull Map<ChatColor, Integer> scores) {
 		StringBuilder scoreList = new StringBuilder(" &3( ");
 		int counter = 0;
 		for (ChatColor color : scores.keySet()) {
@@ -234,12 +230,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return scoreList.toString();
 	}
 
-	Team getSmallestTeam(List<Minigamer> minigamers, List<Team> teams) {
+	protected @Nullable Team getSmallestTeam(@NotNull List<Minigamer> minigamers, @NotNull List<Team> teams) {
 		Map<Team, Integer> assignments = getCurrentAssignments(minigamers, teams);
 		return getSmallestTeam(assignments);
 	}
 
-	private Team getSmallestTeam(Map<Team, Integer> assignments) {
+	protected @Nullable Team getSmallestTeam(@NotNull Map<Team, Integer> assignments) {
 		Team smallest = null;
 		int min = Integer.MAX_VALUE;
 		for (Map.Entry<Team, Integer> entry : assignments.entrySet()) {
@@ -252,7 +248,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return smallest;
 	}
 
-	private Map<Team, Integer> getCurrentAssignments(List<Minigamer> minigamers, List<Team> teams) {
+	private @NotNull Map<Team, Integer> getCurrentAssignments(@NotNull List<Minigamer> minigamers, @NotNull List<Team> teams) {
 		Map<Team, Integer> assignments = new HashMap<>();
 		teams.forEach(team -> assignments.put(team, 0));
 		minigamers.forEach(minigamer -> {
@@ -263,7 +259,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public boolean shouldBeOver(Match match) {
+	public boolean shouldBeOver(@NotNull Match match) {
 		Set<Team> teams = new HashSet<>();
 		match.getMinigamers().stream().filter(Minigamer::isAlive).forEach(minigamer -> teams.add(minigamer.getTeam()));
 		if (teams.size() == 1) {
@@ -283,15 +279,15 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return false;
 	}
 
-	public void onTurnStart(Match match, Team team) {
+	public void onTurnStart(@NotNull Match match, @NotNull Team team) {
 		match.getMatchData().setTurnStarted(LocalDateTime.now());
 	}
 
-	public void onTurnEnd(Match match, Team team) {
+	public void onTurnEnd(@NotNull Match match, @NotNull Team team) {
 
 	}
 
-	public void nextTurn(Match match) {
+	public void nextTurn(@NotNull Match match) {
 		Arena arena = match.getArena();
 		MatchData matchData = match.getMatchData();
 		MatchTasks tasks = match.getTasks();
@@ -333,7 +329,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Match match = event.getMatch();
 		Team team = event.getMinigamer().getTeam();
 		if (team != null && team.equals(match.getMatchData().getTurnTeam()))
@@ -346,7 +342,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public int getMultiplier(Match match, Minigamer minigamer) {
+	public int getMultiplier(@NotNull Match match, @NotNull Minigamer minigamer) {
 		int winningScore = match.getWinningScore();
 		Team team = minigamer.getTeam();
 		// ignore losing teams
@@ -355,7 +351,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return super.getMultiplier(match, minigamer);
 	}
 
-	public boolean basicBalanceCheck(List<Minigamer> minigamers) {
+	public final boolean basicBalanceCheck(@NotNull List<Minigamer> minigamers) {
 		if (minigamers.isEmpty())
 			return false;
 
@@ -374,11 +370,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return true;
 	}
 
-	protected List<BalanceWrapper> getBalanceWrappers(Minigamer minigamer) {
+	protected @NotNull List<BalanceWrapper> getBalanceWrappers(@NotNull Minigamer minigamer) {
 		return getBalanceWrappers(minigamer.getMatch());
 	}
 
-	protected List<BalanceWrapper> getBalanceWrappers(Match match) {
+	protected @NotNull List<BalanceWrapper> getBalanceWrappers(@NotNull Match match) {
 		// ALL PERCENTAGES HERE RANGE FROM 0 to 1 !!
 		List<Team> teams = match.getArena().getTeams();
 		List<BalanceWrapper> wrappers = new ArrayList<>();
@@ -407,7 +403,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		// auto-balancing
 		super.onDeath(event);
 		if (!usesAutoBalancing())
@@ -445,7 +441,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void balance(List<Minigamer> minigamers) {
+	public void balance(@NotNull List<Minigamer> minigamers) {
 		minigamers = new ArrayList<>(minigamers); // cries in pass by reference
 		if (!basicBalanceCheck(minigamers))
 			return;

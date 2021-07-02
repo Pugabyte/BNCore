@@ -13,7 +13,7 @@ import me.pugabyte.nexus.features.minigames.models.arenas.SabotageArena;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -75,6 +75,6 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
         if (matchData.getSabotage() == null)
             matchData.sabotage(task);
         else
-            SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, .8f, 1f);
+			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).category(SoundCategory.VOICE).volume(.8f).play();
     }
 }

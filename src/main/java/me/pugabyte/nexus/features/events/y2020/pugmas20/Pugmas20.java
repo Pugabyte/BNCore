@@ -165,7 +165,7 @@ public class Pugmas20 implements Listener {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		return user.checkDaily(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes);
+		return user.getDailyTokensLeft(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes);
 	}
 
 	public static void giveDailyTokens(Player player, String id, int amount) {

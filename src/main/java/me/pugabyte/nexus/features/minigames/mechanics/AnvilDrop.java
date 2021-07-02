@@ -48,25 +48,25 @@ public class AnvilDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ANVIL);
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		dropAnvils(event.getMatch());
 	}
 
 	@Override
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		if (event.getOriginalEvent() instanceof EntityDamageEvent)
 			((EntityDamageEvent) event.getOriginalEvent()).setDamage(event.getMinigamer().getPlayer().getHealth() + 1);
 		super.onDamage(event);
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getOriginalEvent() instanceof EntityDamageEvent entityDamageEvent) {
 			if (entityDamageEvent.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
 				String minigamer = event.getMinigamer().getColoredName();

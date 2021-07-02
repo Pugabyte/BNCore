@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
+import eden.annotations.Disabled;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
@@ -46,6 +47,7 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
+@Disabled
 @NoArgsConstructor
 @Permission("group.admin")
 public class BearFair21PathfinderCommand extends CustomCommand implements Listener {
@@ -231,7 +233,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Material type = event.getBlock().getType();
 		boolean end = switch (type) {
 			case LIME_CONCRETE_POWDER, PURPLE_CONCRETE_POWDER, WHITE_CONCRETE_POWDER,
-					YELLOW_CONCRETE_POWDER, CYAN_CONCRETE_POWDER, PINK_CONCRETE_POWDER -> false;
+				YELLOW_CONCRETE_POWDER, CYAN_CONCRETE_POWDER, PINK_CONCRETE_POWDER -> false;
 			default -> true;
 		};
 
@@ -279,15 +281,15 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
 				PathfinderHelper.getLineTasks().add(LineEffect.builder()
-						.player(player)
-						.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
-						.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
-						.density(0.5)
-						.count(15)
-						.color(ColorType.RED.getBukkitColor())
-						.ticks(-1)
-						.start()
-						.getTaskId());
+					.player(player)
+					.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
+					.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
+					.density(0.5)
+					.count(15)
+					.color(ColorType.RED.getBukkitColor())
+					.ticks(-1)
+					.start()
+					.getTaskId());
 			}
 
 		} else if (type.equals(Material.YELLOW_CONCRETE_POWDER))

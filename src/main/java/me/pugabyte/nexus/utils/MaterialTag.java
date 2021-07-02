@@ -131,6 +131,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
 
+	public static final MaterialTag ALL_BEEHIVES = new MaterialTag(BEEHIVE, BEE_NEST);
+
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
 		.append(new MaterialTag("STONE_BRICK", MatchMode.PREFIX))
 		.append(new MaterialTag("_STONE_BRICKS", MatchMode.SUFFIX)).exclude(END_STONE_BRICKS)

@@ -29,7 +29,7 @@ public class RadioUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private byte volume = 100;
+	private byte volume = 25;
 	private boolean mute = false;
 
 	private String serverRadioId;
@@ -57,6 +57,9 @@ public class RadioUser implements PlayerOwnedObject {
 	public Radio getLastServerRadio() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig config = configService.get0();
+		if (lastServerRadioId == null)
+			return null;
+
 		return config.getById(lastServerRadioId);
 	}
 }

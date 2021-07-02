@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import java.util.Map;
 @SerializableAs("Lobby")
 public class Lobby implements ConfigurationSerializable {
 	private int waitTime = 30;
-	private Location location;
+	private @MonotonicNonNull Location location;
 	private boolean timerStarted;
 	private final @NotNull Object timerLock = new Object();
 
@@ -32,7 +33,7 @@ public class Lobby implements ConfigurationSerializable {
 		this(new HashMap<>());
 	}
 
-	public Lobby(Map<String, Object> map) {
+	public Lobby(@NotNull Map<String, Object> map) {
 		this.waitTime = (Integer) map.getOrDefault("waitTime", waitTime);
 		this.location = (Location) map.getOrDefault("location", location);
 	}
@@ -45,9 +46,9 @@ public class Lobby implements ConfigurationSerializable {
 		}};
 	}
 
-	public void join(Minigamer minigamer) {
+	public void join(@NotNull Minigamer minigamer) {
 		minigamer.teleport(location);
-		minigamer.clearState();
+		minigamer.clearState(true);
 		synchronized (timerLock) {
 			if (!timerStarted)
 				new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
@@ -55,14 +56,14 @@ public class Lobby implements ConfigurationSerializable {
 	}
 
 	private class LobbyTimer {
-		private final Lobby lobby;
-		private final Match match;
-		private final Arena arena;
+		private final @NotNull Lobby lobby;
+		private final @NotNull Match match;
+		private final @NotNull Arena arena;
 		private int time;
-		private final List<Integer> broadcasts = Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1);
+		private static final @NotNull List<Integer> broadcasts = Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1);
 		private int taskId;
 
-		LobbyTimer(Lobby lobby, Match match, int time) {
+		LobbyTimer(@NotNull Lobby lobby, @NotNull Match match, int time) {
 			this.lobby = lobby;
 			this.match = match;
 			this.arena = match.getArena();

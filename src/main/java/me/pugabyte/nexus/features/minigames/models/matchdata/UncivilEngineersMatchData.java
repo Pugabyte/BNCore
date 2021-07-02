@@ -1,26 +1,39 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
-import lombok.Data;
+import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.nexus.features.minigames.models.Match;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Data
+import static me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers.getStart;
+import static me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers.offset;
+
+@Getter
 @MatchDataFor(UncivilEngineers.class)
 public class UncivilEngineersMatchData extends CheckpointData {
-	public List<Entity> entities = new ArrayList<>();
-	public Map<UUID, Integer> playerStrips = new HashMap<>();
-	public Map<UUID, List<EntityType>> playerEntities = new HashMap<>();
+	private final Map<UUID, Integer> slices = new HashMap<>();
 
 	public UncivilEngineersMatchData(Match match) {
 		super(match);
 	}
+
+	public void assignSlice(Minigamer minigamer, int id) {
+		slices.put(minigamer.getUniqueId(), id);
+		minigamer.teleport(offset(getStart(), id));
+	}
+
+	public int getSlice(Minigamer minigamer) {
+		final UUID uuid = minigamer.getUniqueId();
+		if (!slices.containsKey(uuid))
+			throw new InvalidInputException("[UncivilEngineers] Could not find slice number for " + minigamer.getNickname());
+
+		return slices.get(uuid);
+	}
+
 }

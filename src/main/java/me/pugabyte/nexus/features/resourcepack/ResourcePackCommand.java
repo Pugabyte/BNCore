@@ -16,6 +16,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
@@ -24,6 +25,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -157,6 +159,9 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("menu [folder]")
 	@Permission("group.staff")
 	void menu(CustomModelFolder folder) {
+		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)
+			permissionError();
+
 		new CustomModelMenu(folder).open(player());
 	}
 

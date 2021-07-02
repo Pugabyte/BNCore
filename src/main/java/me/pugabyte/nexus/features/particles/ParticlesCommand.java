@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.particles;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.features.particles.effects.LineEffect;
 import me.pugabyte.nexus.features.particles.providers.ParticleMenuProvider;
@@ -72,7 +72,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MatchQuitEvent event) {
+	public void onMatchQuit(MinigamerQuitEvent event) {
 		startParticles(event.getMinigamer().getPlayer());
 	}
 

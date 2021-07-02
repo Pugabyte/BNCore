@@ -8,7 +8,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -66,7 +66,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 				reset.run();
 				String fmt = sec < .9d ? "fast" : "slow";
 				inventoryContents.set(destination, inventoryContents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too "+fmt+", try again").build()));
-				SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.MASTER, 2f, 1f);
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).receiver(player).category(SoundCategory.MASTER).volume(2f).play();
 			} else {
 				getTask().partCompleted(PlayerManager.get(player));
 				inventory.close(player);

@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelPaintersArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -61,12 +61,12 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.PAINTING);
 	}
 
@@ -76,7 +76,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
@@ -87,7 +87,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
@@ -148,7 +148,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
@@ -160,7 +160,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		event.getMatch().getTasks().async(() -> {
 			pasteLogo(event.getMatch());
 			clearFloors(event.getMatch());
@@ -169,7 +169,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 		PixelPaintersMatchData matchData = match.getMatchData();
 		// During Game

@@ -17,10 +17,17 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 
 	@Path
 	public void bearfair() {
-		if (!BearFair21.canWarp() && !isStaff())
-			error("Soon™");
+		if (!isStaff())
+			if (!BearFair21.canWarp())
+				error("Soon™");
 
 		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR21));
+	}
+
+	@Override
+	public void teleportNearest() {
+		player().setFallDistance(0);
+		super.teleportNearest();
 	}
 
 	@Override

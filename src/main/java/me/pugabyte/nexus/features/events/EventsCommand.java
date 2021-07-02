@@ -133,18 +133,4 @@ public class EventsCommand extends CustomCommand {
 
 	// Database commands
 
-	@Path("database debug [player]")
-	@Permission("group.admin")
-	void debug(@Arg("self") EventUser user) {
-		send(toPrettyString(user));
-	}
-
-	@Path("database delete [player]")
-	@Permission("group.admin")
-	void delete(@Arg("self") EventUser user) {
-		service.clearCache();
-		service.delete(user);
-		send("Deleted data for " + user.getName());
-	}
-
 }

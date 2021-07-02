@@ -15,9 +15,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
+import me.pugabyte.nexus.models.radio.RadioConfig.RadioSong;
+import me.pugabyte.nexus.models.radio.RadioConfig.RadioType;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
-import me.pugabyte.nexus.models.radio.RadioSong;
-import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.Name;

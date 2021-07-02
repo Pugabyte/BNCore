@@ -33,7 +33,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.RED_BANNER);
 	}
 
@@ -94,7 +94,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
 		Flag carriedFlag = matchData.getFlagByCarrier(minigamer);
@@ -164,7 +164,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 
 		CaptureTheFlagMatchData matchData = event.getMatch().getMatchData();

@@ -9,7 +9,6 @@ import me.pugabyte.nexus.models.lava.InfiniteLava;
 import me.pugabyte.nexus.models.lava.InfiniteLavaService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import static me.pugabyte.nexus.models.lava.InfiniteLava.DISABLED_WORLDS;
 
 @NoArgsConstructor
 @Permission("group.staff")
@@ -31,9 +32,8 @@ public class LavaCommand extends CustomCommand implements Listener {
 
 	@Path("[on|off]")
 	void lava(Boolean enable) {
-		WorldGroup world = WorldGroup.of(player());
-		if (world.equals(WorldGroup.SKYBLOCK))
-			error("Not allowed in " + world);
+		if (DISABLED_WORLDS.contains(worldGroup()))
+			error("Not allowed in " + camelCase(worldGroup()));
 
 		if (enable == null)
 			enable = !infiniteLava.isEnabled();
@@ -52,10 +52,6 @@ public class LavaCommand extends CustomCommand implements Listener {
 
 		Material material = event.getBucket();
 		if (!material.equals(Material.LAVA_BUCKET))
-			return;
-
-		WorldGroup world = WorldGroup.of(player);
-		if (world.equals(WorldGroup.SKYBLOCK))
 			return;
 
 		InfiniteLava infiniteLava = new InfiniteLavaService().get(player);

@@ -235,13 +235,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 	public void addPronoun(String pronoun, @Nullable String executor) {
 		pronoun = PronounsCommand.getPronoun(pronoun);
 		pronouns.add(pronoun);
-		String log;
-		if (executor == null || executor.equals(getNickname()))
-			log = getNickname() + " added the";
-		else
-			log = executor + " added " + getNickname() + "'s";
-		Discord.staffLog(StringUtils.getDiscordPrefix("Pronouns") + log + " pronoun `" + pronoun + "`");
-		updatePronouns();
+		logPronoun(executor, pronoun, "added");
 	}
 
 	public void removePronoun(String pronoun) {
@@ -251,11 +245,15 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 	public void removePronoun(String pronoun, @Nullable String executor) {
 		pronoun = PronounsCommand.getPronoun(pronoun);
 		pronouns.remove(pronoun);
+		logPronoun(executor, pronoun, "removed");
+	}
+
+	private void logPronoun(@Nullable String executor, @NotNull String pronoun, @NotNull String verb) {
 		String log;
 		if (executor == null || executor.equals(getNickname()))
-			log = getNickname() + " removed the";
+			log = getNickname() + " " + verb + " the";
 		else
-			log = executor + " removed " + getNickname() + " 's";
+			log = executor + " " + verb + " " + getNickname() + "'s";
 		Discord.staffLog(StringUtils.getDiscordPrefix("Pronouns") + log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}

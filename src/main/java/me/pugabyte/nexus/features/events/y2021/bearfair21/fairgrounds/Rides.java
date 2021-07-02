@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.RIDES;
+
 public class Rides {
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 
@@ -26,18 +29,17 @@ public class Rides {
 		rideMap.clear();
 		for (Ride ride : Ride.values()) {
 			rideMap.put(ride, false);
-//			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 		}
 
 		// Dynamic enable task
-		Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			for (Ride ride : Ride.values()) {
 				boolean oldStatus = rideMap.getOrDefault(ride, false);
 				boolean curStatus = ride.getCurrentStatus();
 				if (oldStatus == curStatus) continue;
 
 				if (curStatus) {
-					if (!BearFair21.getConfig().isEnableRides())
+					if (!BearFair21.getConfig().isEnabled(RIDES))
 						continue;
 
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
@@ -116,7 +118,11 @@ public class Rides {
 		}
 
 		public List<Player> getPlayersInRadius() {
-			return BearFair21.getPlayers().stream().filter(this::isWithinRadius).collect(Collectors.toList());
+			return BearFair21.getPlayers().stream()
+				.filter(this::isWithinRadius)
+				.filter(player -> !PlayerUtils.isVanished(player))
+				.filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR))
+				.collect(Collectors.toList());
 		}
 
 		public boolean getCurrentStatus() {

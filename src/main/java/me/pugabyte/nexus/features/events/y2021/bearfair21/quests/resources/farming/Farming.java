@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farm
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -10,7 +11,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
@@ -63,10 +63,11 @@ public class Farming implements Listener {
 				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
 					if (new CooldownService().check(player, "BF21_decorOnly", Time.MINUTE)) {
 						send(Errors.decorOnly, player);
-						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+						Quests.sound_villagerNo(player);
 					}
 					return true;
 				}
+				Quests.giveExp(player);
 				Tasks.wait(20, () -> RegenCrops.getBlockRegenMap().put(block.getLocation(), material));
 
 				// Multi Block
@@ -74,11 +75,12 @@ public class Farming implements Listener {
 				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
 					if (new CooldownService().check(player, "BF21_bottomBlock", Time.MINUTE)) {
 						send(Errors.bottomBlock, player);
-						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+						Quests.sound_villagerNo(player);
 					}
 					return true;
 				}
 
+				Quests.giveExp(player);
 				RegenCrops.getMultiRegenMap().put(block.getLocation(), material);
 				Block above = block.getRelative(0, 1, 0);
 				if (above.getType().equals(material)) {
@@ -103,11 +105,12 @@ public class Farming implements Listener {
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF21_notFullyGrown", Time.MINUTE)) {
 				send(Errors.notFullyGrown, player);
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+				Quests.sound_villagerNo(player);
 			}
 			return true;
 		}
 
+		Quests.giveExp(player);
 		Tasks.wait(5, () -> {
 			ageable.setAge(0);
 			block.setType(material);

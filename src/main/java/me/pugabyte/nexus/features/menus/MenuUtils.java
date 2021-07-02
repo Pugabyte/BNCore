@@ -127,7 +127,7 @@ public abstract class MenuUtils {
 	protected ItemStack nameItem(ItemStack item, String name, List<String> lore) {
 		ItemMeta meta = item.getItemMeta();
 		if (name != null)
-			meta.setDisplayName(colorize(name));
+			meta.setDisplayName(colorize("&f" + name));
 		if (lore != null)
 			meta.setLore(lore);
 

@@ -19,4 +19,10 @@ public class BearFair21UserService extends MongoService<BearFair21User> {
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
 	}
+
+	@Override
+	protected void beforeDelete(BearFair21User user) {
+		user.cancelActiveTask();
+	}
+
 }

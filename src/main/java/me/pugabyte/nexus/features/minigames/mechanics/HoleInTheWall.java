@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.HoleInTheWallArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData.Track;
@@ -53,12 +53,12 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.COBBLESTONE_WALL);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
@@ -79,7 +79,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	public static final int SKIP_BUTTON_COOLDOWN_IN_TICKS = Time.SECOND.x(3);
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 
 		HoleInTheWallArena arena = event.getMatch().getArena();
@@ -96,7 +96,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		Match match = event.getMatch();
@@ -124,7 +124,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
 
 		Track track = matchData.getTrack(event.getMinigamer());
@@ -135,7 +135,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
 		matchData.getTracks().forEach(Track::reset);
 

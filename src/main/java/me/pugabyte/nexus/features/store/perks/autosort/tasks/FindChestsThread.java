@@ -163,7 +163,7 @@ public class FindChestsThread extends Thread {
 
 			Location chestLocation = this.remainingChestLocations.poll();
 			if (chestLocation == null) {
-				send(autoSortUser, AutoSort.PREFIX + "Deposited &e%o &3items into nearby chests", runningDepositRecord.totalItems);
+				send(autoSortUser, AutoSort.PREFIX + "Deposited &e%d &3items into nearby chests", runningDepositRecord.totalItems);
 				autoSortUser.tip(TipType.AUTOSORT_DEPOSIT_QUICK);
 			} else {
 				Player player = autoSortUser.getOnlinePlayer();

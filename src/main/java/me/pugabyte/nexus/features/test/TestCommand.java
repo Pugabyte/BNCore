@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.test;
 
 import eden.utils.TimeUtils.Time;
-import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -11,18 +11,22 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-@NoArgsConstructor
-@Permission("group.staff")
-//@Disabled
-public class TestCommand extends CustomCommand implements Listener {
-//	List<Player> controlMinecart = new ArrayList<>();
+@Permission("group.admin")
+public class TestCommand extends CustomCommand {
 
 	public TestCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path("removeHdb")
+	void hdbEquals() {
+		ItemStack head = Nexus.getHeadAPI().getItemHead("43417");
+		inventory().addItem(head);
+		inventory().removeItem(head);
 	}
 
 	@Path("start")

@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,9 +44,9 @@ public class Interactables {
 					count.getAndIncrement();
 					if (count.get() == limit) {
 						if (count.get() == max)
-							one.getWorld().playSound(one, Sound.BLOCK_BELL_USE, 1F, 2F);
+							new SoundBuilder(Sound.BLOCK_BELL_USE).location(one).pitch(2).play();
 						else
-							one.getWorld().playSound(one, Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 0.1F);
+							new SoundBuilder(Sound.BLOCK_BELL_USE).location(one).pitch(0.1).play();
 						breakBool.set(true);
 					}
 				}

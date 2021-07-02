@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +33,13 @@ public enum Trophy {
 //	EASTER_2021_PARTICIPATION(Material.STONE),
 //	EASTER_2021_COMPLETION(Material.STONE),
 
-//	PRIDE_2021_PARTICIPATION(Material.STONE),
+	//	PRIDE_2021_PARTICIPATION(Material.STONE),
 	PRIDE_2021(Material.GOLD_INGOT, 1),
 
-//	BEAR_FAIR_2021_PARTICIPATION(Material.STONE),
-//	BEAR_FAIR_2021_COMPLETION(Material.STONE),
+	//	BEAR_FAIR_2021_PARTICIPATION(Material.STONE),
+	BEAR_FAIR_2021(Material.CAKE, 1),
+	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(Material.CYAN_STAINED_GLASS_PANE, 101),
+	BEAR_FAIR_2021_MINIGOLF(Material.GOLD_INGOT, 2),
 	;
 
 	@NonNull
@@ -58,20 +61,27 @@ public enum Trophy {
 
 	public static List<String> getEvents() {
 		return Arrays.stream(values())
-				.map(Trophy::getEvent)
-				.distinct()
-				.toList();
+			.map(Trophy::getEvent)
+			.distinct()
+			.toList();
+	}
+
+	public void give(Player player) {
+		TrophyHolderService trophyService = new TrophyHolderService();
+		TrophyHolder holder = trophyService.get(player);
+		holder.earnAndMessage(this);
+		trophyService.save(holder);
 	}
 
 	public static List<Trophy> getTrophies(String event) {
 		return Arrays.stream(values())
-				.filter(trophy -> trophy.getEvent().equals(event))
-				.toList();
+			.filter(trophy -> trophy.getEvent().equals(event))
+			.toList();
 	}
 
 	public static List<Trophy> getEarnedTrophies(TrophyHolder holder, String event) {
 		return Arrays.stream(values())
-				.filter(trophy -> trophy.getEvent().equals(event))
+			.filter(trophy -> trophy.getEvent().equals(event))
 				.filter(holder::hasEarned)
 				.toList();
 	}

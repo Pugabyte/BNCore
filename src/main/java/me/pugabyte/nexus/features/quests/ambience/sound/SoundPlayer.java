@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.quests.ambience.sound;
 
+import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -54,7 +55,13 @@ public class SoundPlayer {
 	}
 
 	public void playSound(String sound, Location location, float volume, float pitch) {
-		player.playSound(location, sound, SoundCategory.AMBIENT, volume, pitch);
+		new SoundBuilder(org.bukkit.Sound.valueOf(sound))
+			.receiver(player)
+			.location(location)
+			.category(SoundCategory.AMBIENT)
+			.volume(volume)
+			.pitch(pitch)
+			.play();
 	}
 
 	public void stopSounds() {

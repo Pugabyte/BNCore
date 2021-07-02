@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import com.destroystokyo.paper.ClientOption;
+import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
@@ -119,7 +121,7 @@ public class WhoIsCommand extends CustomCommand {
 			if (new BankerService().getBalance(offlinePlayer, shopGroup) != 500)
 				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup)).group();
 
-		if (offlinePlayer.isOnline() && player != null) {
+		if (player != null) {
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode())).group();
@@ -129,6 +131,10 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")").group();
 
 			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player)).group();
+
+			final ChatVisibility chatVisibility = player.getClientOption(ClientOption.CHAT_VISIBILITY);
+			if (chatVisibility != ChatVisibility.FULL)
+				json.newline().next("&3Chat Visibility: &e" + camelCase(chatVisibility));
 		}
 
 		json.newline().next("&3OP: &e" + offlinePlayer.isOp()).group();

@@ -9,6 +9,8 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection.ReflectionGame;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -87,9 +89,31 @@ public class Fairgrounds implements Listener {
 				return;
 			}
 
-			PlayerUtils.giveItems(player, getItems());
+			PlayerUtils.giveItems(player, this.getItems());
 		}
 
+		public void removeItems(Player player) {
+			PlayerUtils.removeItems(player, this.getItems());
+		}
+	}
+
+	@EventHandler
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
+		String id = event.getRegion().getId();
+		if (id.equalsIgnoreCase("bearfair21_main_coaster_kit")) {
+			if (PlayerUtils.playerHas(event.getPlayer(), BearFair21Kit.MINECART.getItem()))
+				return;
+
+			PlayerUtils.giveItem(event.getPlayer(), BearFair21Kit.MINECART.getItem());
+		}
+	}
+
+	@EventHandler
+	public void onRegionExit(PlayerLeftRegionEvent event) {
+		String id = event.getRegion().getId();
+		if (id.equalsIgnoreCase("bearfair21_main_coaster_kit")) {
+			PlayerUtils.removeItem(event.getPlayer(), BearFair21Kit.MINECART.getItem());
+		}
 	}
 
 	@EventHandler

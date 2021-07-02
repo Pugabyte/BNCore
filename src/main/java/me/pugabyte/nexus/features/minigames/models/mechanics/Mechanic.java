@@ -14,8 +14,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
@@ -37,10 +37,13 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -66,21 +69,21 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return Component.text(getName(), NamedTextColor.YELLOW);
 	}
 
-	public String getPrefix() {
+	public @NotNull String getPrefix() {
 		return StringUtils.getPrefix(this.getClass());
 	}
 
-	public abstract ItemStack getMenuItem();
+	public abstract @NotNull ItemStack getMenuItem();
 
 	public boolean isTeamGame() {
 		return false;
 	}
 
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.ADVENTURE;
 	}
 
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return false;
 	}
 
@@ -94,7 +97,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @param minigamer the user
 	 * @return whether or not to allow the perk
 	 */
-	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
 		return !PlayerParticlePerk.class.isAssignableFrom(perk);
 	}
 
@@ -104,7 +107,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @param minigamer the user
 	 * @return whether or not to allow the perk
 	 */
-	public final boolean usesPerk(Perk perk, Minigamer minigamer) {
+	public final boolean usesPerk(@NotNull Perk perk, @NotNull Minigamer minigamer) {
 		return usesPerk(perk.getClass(), minigamer);
 	}
 
@@ -115,7 +118,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {
 			if (match.getScoreboard() != null)
@@ -128,7 +131,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		match.getTasks().register(MatchTaskType.SCOREBOARD, taskId);
 	}
 
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		Match match = event.getMatch();
 		match.broadcast("Starting match");
 		match.broadcastNoPrefix("");
@@ -152,60 +155,63 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 					.onComplete(() -> {
 						MatchBeginEvent beginEvent = new MatchBeginEvent(match);
 						if (beginEvent.callEvent())
-							begin(beginEvent);
+							onBegin(beginEvent);
 					}));
 
 			match.getTasks().register(MatchTaskType.BEGIN_DELAY, taskId);
 		} else {
 			MatchBeginEvent beginEvent = new MatchBeginEvent(match);
 			if (beginEvent.callEvent())
-				begin(beginEvent);
+				onBegin(beginEvent);
 		}
 
 		int taskId = match.getTasks().repeat(0, 1, () -> match.getMinigamers().forEach(Minigamer::tick));
 		match.getTasks().register(MatchTaskType.TICK, taskId);
 	}
 
-	public void begin(Match match) {
+	public void begin(@NotNull Match match) {
 		MatchBeginEvent beginEvent = new MatchBeginEvent(match);
 		if (beginEvent.callEvent())
-			begin(beginEvent);
+			onBegin(beginEvent);
 	}
 
-	public void begin(MatchBeginEvent event) {
+	public void onBegin(@NotNull MatchBeginEvent event) {
 		event.getMatch().setBegun(true);
 	}
 
-	public void end(Match match) {
+	public void end(@NotNull Match match) {
 		match.end();
 	}
 
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
+//		for (Entity entity : event.getMatch().getEntities())
+//			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
+		event.getMatch().getEntities().forEach(Entity::remove);
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
 	}
 
-	public abstract void processJoin(Minigamer minigamer);
+	public abstract void processJoin(@NotNull Minigamer minigamer);
 
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined");
 		tellMapAndMechanic(minigamer);
 	}
 
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit");
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}
 
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.damaged();
 	}
 
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getAttacker() != null && usesAlternativeRegen())
 			event.getAttacker().heal(2);
 
@@ -216,11 +222,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			event.getMatch().end();
 	}
 
-	public void kill(Minigamer minigamer) {
+	public final void kill(@NotNull Minigamer minigamer) {
 		kill(minigamer, null);
 	}
 
-	public void kill(Minigamer victim, Minigamer attacker) {
+	public void kill(@NotNull Minigamer victim, @Nullable Minigamer attacker) {
 		MinigamerDeathEvent event = new MinigamerDeathEvent(victim, attacker);
 		if (!event.callEvent()) return;
 
@@ -235,12 +241,16 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public void tellMapAndMechanic(Minigamer minigamer) {
+	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
 		String mechanicName = arena.getMechanic().getName();
-		String description = arena.getMechanic().getDescription();
 		String arenaName = arena.getDisplayName();
 		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		tellDescriptionAndModifier(minigamer);
+	}
+
+	protected final void tellDescriptionAndModifier(@NotNull Minigamer minigamer) {
+		String description = minigamer.getMatch().getArena().getMechanic().getDescription();
 		if (!description.isEmpty() && !description.toLowerCase().startsWith("todo"))
 			minigamer.tell("Objective: &e" + description);
 		MinigameModifier modifier = Minigames.getModifier();
@@ -249,21 +259,21 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		}
 	}
 
-	public abstract void announceWinners(Match match);
+	public abstract void announceWinners(@NotNull Match match);
 
-	public int getWinningScore(Collection<Integer> scores) {
+	public int getWinningScore(@NotNull Collection<Integer> scores) {
 		if (scores.size() == 0)
 			return 0;
 		return Collections.max(scores);
 	}
 
-	public void balance(Minigamer minigamer) {
+	public final void balance(@NotNull Minigamer minigamer) {
 		balance(Collections.singletonList(minigamer));
 	}
 
-	public abstract void balance(List<Minigamer> minigamers);
+	public abstract void balance(@NotNull List<Minigamer> minigamers);
 
-	public String getScoreboardTitle(Match match) {
+	public @NotNull String getScoreboardTitle(@NotNull Match match) {
 		return left(match.getArena().getName(), 16);
 	}
 
@@ -271,7 +281,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 		int lineCount = 0;
 
@@ -312,11 +322,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return lines;
 	}
 
-	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		return new HashMap<>();
 	}
 
-	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
 		return new HashMap<>();
 	}
 
@@ -330,11 +340,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 				}
 	}
 
-	public boolean canUseBlock(Minigamer minigamer, Block block) {
+	public boolean canUseBlock(@NotNull Minigamer minigamer, @NotNull Block block) {
 		return minigamer.getMatch().getArena().canUseBlock(block.getType());
 	}
 
-	public abstract boolean shouldBeOver(Match match);
+	public abstract boolean shouldBeOver(@NotNull Match match);
 
 	public boolean shuffleSpawnpoints() {
 		return true;
@@ -342,11 +352,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	// Reflection utils
 
-	public List<Class<? extends Mechanic>> getSuperclasses() {
+	public @NotNull final List<Class<? extends Mechanic>> getSuperclasses() {
 		return Utils.getSuperclasses(this.getClass());
 	}
 
-	public <T> T getAnnotation(Class<? extends Annotation> annotation) {
+	@Contract("null -> null; !null -> _") @Nullable
+	public final <T> T getAnnotation(@Nullable Class<? extends Annotation> annotation) {
+		if (annotation == null) return null;
 		for (Class<? extends Mechanic> mechanic : getSuperclasses()) {
 			Annotation result = mechanic.getAnnotation(annotation);
 			if (result != null) {
@@ -365,21 +377,21 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public static boolean isInRegion(Match match, Block block, String region) {
+	public static boolean isInRegion(@NotNull Match match, @NotNull Block block, @NotNull String region) {
 		return match.getArena().isInRegion(block, region);
 	}
 
-	public static void error(String message, Match match) {
+	public static void error(@NotNull String message, @NotNull Match match) {
 		Nexus.severe(message);
 		match.broadcast("&c" + message);
 		match.end();
 	}
 
-	public static void sendBarWithTimer(Minigamer minigamer, String message) {
+	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
 		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
-	public static void sendBarWithTimer(Minigamer minigamer, ComponentLike message) {
+	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {
 		minigamer.sendActionBar(new JsonBuilder(Timespan.of(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
 	}
 

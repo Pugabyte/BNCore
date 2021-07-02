@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.PronounsCommand;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -20,8 +21,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -58,6 +61,16 @@ public class DiscordUser implements PlayerOwnedObject {
 		return name;
 	}
 
+	/**
+	 * For DiscordUser objects, {@link #getIngameName()} or {@link #getDiscordName()} should be
+	 * used instead. As of writing, this returns the same value as the former.
+	 */
+	@Override
+	@Deprecated
+	public @NotNull String getName() {
+		return PlayerOwnedObject.super.getName();
+	}
+
 	public String getIngameName() {
 		return getName();
 	}
@@ -66,23 +79,37 @@ public class DiscordUser implements PlayerOwnedObject {
 		return Discord.getName(userId);
 	}
 
+	@Nullable
 	public String getDiscrim() {
-		return getUser().getDiscriminator();
+		User user = getUser();
+		return user == null ? null : user.getDiscriminator();
 	}
 
 	public String getNameAndDiscrim() {
 		return getDiscordName() + "#" + getDiscrim();
 	}
 
+	@Nullable
 	public User getUser() {
-		return Bot.RELAY.jda().retrieveUserById(userId).complete();
+		try {
+			return Bot.RELAY.jda().retrieveUserById(userId).complete();
+		} catch (ErrorResponseException exc) {
+			Nexus.log("Failed to get Discord user for " + userId + ": " + exc.getErrorResponse().getMeaning());
+			return null;
+		}
 	}
 
+	@Nullable
 	public Member getMember() {
 		if (userId == null) return null;
 		Guild guild = getGuild();
 		if (guild == null) return null;
-		return guild.retrieveMemberById(userId).complete();
+		try {
+			return guild.retrieveMemberById(userId).complete();
+		} catch (ErrorResponseException exc) {
+			Nexus.log("Failed to get Discord member for " + userId + ": " + exc.getErrorResponse().getMeaning());
+			return null;
+		}
 	}
 
 	public void updatePronouns(Set<String> pronouns) {

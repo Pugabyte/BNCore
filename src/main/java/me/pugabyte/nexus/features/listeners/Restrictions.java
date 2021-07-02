@@ -197,9 +197,12 @@ public class Restrictions implements Listener {
 		if (!command.split(" ")[0].replace("worldedit:", "").startsWith("//"))
 			return;
 
+		if (command.split(" ", 2).length < 2)
+			return;
+
 		List<Material> used = new ArrayList<>();
 		disallowedInWorldEdit.forEach(material -> {
-			if (command.contains(material.name().toLowerCase()))
+			if (command.split(" ", 2)[1].contains(material.name().toLowerCase()))
 				used.add(material);
 		});
 

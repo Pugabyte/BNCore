@@ -23,12 +23,21 @@ import java.util.Collections;
 
 @Permission("group.staff")
 public class WhereIsCommand extends CustomCommand {
+	private static boolean enabled = true;
 	private final WhereIsService service = new WhereIsService();
 	private final WhereIs whereIs;
 
 	public WhereIsCommand(CommandEvent event) {
 		super(event);
 		whereIs = service.get(player());
+	}
+
+	@Path("glow enabled [false]")
+	void enabled(Boolean enabled) {
+		if (enabled == null)
+			enabled = !WhereIsCommand.enabled;
+		WhereIsCommand.enabled = enabled;
+		send(PREFIX + "Glowing " + (enabled ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("<player>")
@@ -117,12 +126,17 @@ public class WhereIsCommand extends CustomCommand {
 		}
 	}
 
-	private static void unglow(Player viewer) {
-		PlayerUtils.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
+	private static void glow(Player glower, Player viewer) {
+		if (!enabled) {
+			unglow(glower, viewer);
+			return;
+		}
+
+		GlowAPI.setGlowing(glower, Nerd.of(glower).getRank().getGlowColor(), viewer);
 	}
 
-	private static void glow(Player glower, Player viewer) {
-		GlowAPI.setGlowing(glower, Nerd.of(glower).getRank().getGlowColor(), viewer);
+	private static void unglow(Player viewer) {
+		PlayerUtils.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
 	}
 
 	private static void unglow(Player glower, Player viewer) {

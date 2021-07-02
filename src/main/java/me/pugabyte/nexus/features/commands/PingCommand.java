@@ -17,7 +17,7 @@ public class PingCommand extends CustomCommand {
 
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
-		send(PREFIX + (isSelf(player) ? "Your" : player.getName() + "'s") + " ping is &e" + player.spigot().getPing() + "ms");
+		send(PREFIX + (isSelf(player) ? "Your" : player.getName() + "'s") + " ping is &e" + player.getPing() + "ms");
 	}
 
 }

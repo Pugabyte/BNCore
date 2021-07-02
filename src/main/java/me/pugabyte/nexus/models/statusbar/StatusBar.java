@@ -15,8 +15,8 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.chat.Channel;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -83,7 +83,7 @@ public class StatusBar implements PlayerOwnedObject {
 	}
 
 	public static BarColor getColor(UUID uuid) {
-		Chatter chatter = new ChatService().get(uuid);
+		Chatter chatter = new ChatterService().get(uuid);
 		Channel activeChannel = chatter.getActiveChannel();
 		if (activeChannel instanceof PublicChannel channel) {
 			if (StaticChannel.GLOBAL.getChannel().equals(channel))

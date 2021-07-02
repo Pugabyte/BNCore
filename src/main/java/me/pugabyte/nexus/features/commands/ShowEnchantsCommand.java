@@ -14,8 +14,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -78,7 +78,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 
 		int amount = item.getAmount();
 
-		Chatter chatter = new ChatService().get(player);
+		Chatter chatter = new ChatterService().get(player);
 		if (!(chatter.getActiveChannel() instanceof PublicChannel))
 			error("You can't show enchants in private channels");
 		PublicChannel channel = (PublicChannel) chatter.getActiveChannel();
@@ -92,7 +92,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 				.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
 				.hover(item);
 
-		Broadcast.all().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
+		Broadcast.ingame().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
 
 		// Discord
 		if (channel.getDiscordTextChannel() != null) {

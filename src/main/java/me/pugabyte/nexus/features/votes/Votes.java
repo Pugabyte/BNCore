@@ -56,6 +56,7 @@ import static me.pugabyte.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
+	static final int GOAL = 6000;
 
 	@Override
 	public void onStart() {
@@ -97,7 +98,7 @@ public class Votes extends Feature implements Listener {
 			return;
 
 		Setting reminders = new SettingService().get(vote.getUuid(), "vote-reminders");
-		if (reminders.getValue() != null && reminders.getBoolean())
+		if (reminders.getValue() != null && !reminders.getBoolean())
 			return;
 
 		if (!new CooldownService().check(UUID.fromString(vote.getUuid()), "vote-reminder", Time.MINUTE.x(10)))
@@ -131,12 +132,25 @@ public class Votes extends Feature implements Listener {
 				timestamp = timestamp.plusHours(1);
 		}
 
+		if (site == null)
+			return;
+
 		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
 		new VoteService().save(vote);
 
+		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
+			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		int left = 0;
+		if (GOAL > sum)
+			left = GOAL - sum;
+
 		if (new CooldownService().check(UUID.fromString(uuid), "vote-announcement", Time.HOUR)) {
-			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!").send();
-			Broadcast.discord().message(":white_check_mark: **" + name + " voted** for the server and received **" + basePoints + plural(" vote point", basePoints) + "** per site!").send();
+			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site! ";
+			if (left > 0)
+				message += "&e" + left + " &3more votes needed to hit the goal";
+
+			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted" + message).send();
+			Broadcast.discord().message(":white_check_mark: **" + name + " voted**" + message).send();
 		}
 
 		if (vote.getExtra() > 0) {

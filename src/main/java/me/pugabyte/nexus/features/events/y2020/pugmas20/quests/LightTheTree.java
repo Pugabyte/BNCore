@@ -18,7 +18,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
@@ -168,7 +168,7 @@ public class LightTheTree implements Listener {
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
 			user.sendMessage(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
-			SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
+			new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 			user.setTorchesLit(torch);
 			service.save(user);
 		}
@@ -190,12 +190,12 @@ public class LightTheTree implements Listener {
 				Location location = getLocation("treetorch", i);
 				Tasks.wait(wait += Time.SECOND.get(), () -> {
 					fire(player, location);
-					SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
+					new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 				});
 			}
 
 			Tasks.wait(wait + 1, () -> {
-				SoundUtils.playSound(player, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1F, 0.1F);
+				new SoundBuilder(Sound.ENTITY_ILLUSIONER_CAST_SPELL).receiver(player).pitch(0.1F).play();
 				user.setLightTreeStage(QuestStage.COMPLETE);
 				user.setMinesStage(QuestStage.NOT_STARTED);
 				user.getNextStepNPCs().remove(QuestNPC.CINNAMON.getId());

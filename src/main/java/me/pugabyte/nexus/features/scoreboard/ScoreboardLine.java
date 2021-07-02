@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.commands.PushCommand;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.chat.Channel;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.hours.Hours;
@@ -85,7 +85,7 @@ public enum ScoreboardLine {
 	PING {
 		@Override
 		public String render(Player player) {
-			return "&3Ping: &e" + player.spigot().getPing() + "ms";
+			return "&3Ping: &e" + player.getPing() + "ms";
 		}
 	},
 
@@ -93,7 +93,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			String line = "&3Channel: &e";
-			Chatter chatter = new ChatService().get(player);
+			Chatter chatter = new ChatterService().get(player);
 			if (chatter == null)
 				return line + "&eNone";
 			Channel activeChannel = chatter.getActiveChannel();

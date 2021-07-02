@@ -55,12 +55,12 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.SPAWNER);
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		Match match = event.getMatch();
@@ -183,7 +183,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		MonsterMazeMatchData matchData = event.getMatch().getMatchData();
 		matchData.getMonsters().forEach(Entity::remove);

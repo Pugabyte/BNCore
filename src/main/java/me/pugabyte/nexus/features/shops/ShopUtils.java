@@ -1,8 +1,6 @@
 package me.pugabyte.nexus.features.shops;
 
-import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.TimeUtils.Time;
-import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
@@ -42,16 +40,6 @@ public class ShopUtils {
 		if (free && number.doubleValue() == 0)
 			return "free";
 		return "$" + pretty(number);
-	}
-
-	public static boolean isTradeable(ItemStack item) {
-		NBTItem nbtItem = new NBTItem(item);
-		if (nbtItem.hasKey("tradeable") && !nbtItem.getBoolean("tradeable"))
-			return false;
-		if (Backpacks.isBackpack(item))
-			return false;
-
-		return true;
 	}
 
 }

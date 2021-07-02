@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.chat.events;
 
 import me.pugabyte.nexus.models.chat.Channel;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -29,7 +29,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	public abstract Set<Chatter> getRecipients();
 
 	public boolean wasSentTo(Player player) {
-		return wasSentTo(new ChatService().get(player));
+		return wasSentTo(new ChatterService().get(player));
 	}
 
 	public boolean wasSentTo(Chatter chatter) {

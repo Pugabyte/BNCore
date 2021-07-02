@@ -13,12 +13,12 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -36,6 +36,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,12 +66,12 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.LIGHT_BLUE_CONCRETE);
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -81,7 +82,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -90,7 +91,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -102,12 +103,12 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void kill(Minigamer minigamer) {
-		minigamer.spawn();
+	public void kill(@NotNull Minigamer victim, @Nullable Minigamer attacker) {
+		victim.spawn();
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
 		matchData.clearFloor(match);
@@ -138,7 +139,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		matchData.resetRound();
 
-		if (matchData.getCurrentRound() == MAX_ROUNDS) {
+		if (matchData.getCurrentRound() >= MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
@@ -276,7 +277,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		event.setCancelled(true);
 
-		ChatService chatService = new ChatService();
+		ChatterService chatService = new ChatterService();
 		Set<Chatter> recipients = match.getMinigamers().stream()
 				.map(_minigamer -> chatService.get(_minigamer.getPlayer()))
 				.collect(toSet());

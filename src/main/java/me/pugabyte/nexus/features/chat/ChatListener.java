@@ -5,8 +5,8 @@ import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +25,7 @@ public class ChatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent event) {
-		Chatter chatter = new ChatService().get(event.getPlayer());
+		Chatter chatter = new ChatterService().get(event.getPlayer());
 		Tasks.sync(() -> {
 			// Prevents "t/command"
 			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(event.getMessage()).matches())
@@ -53,13 +53,13 @@ public class ChatListener implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		Chatter chatter = new ChatService().get(event.getPlayer());
+		Chatter chatter = new ChatterService().get(event.getPlayer());
 		chatter.updateChannels();
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Chatter chatter = new ChatService().get(event.getPlayer());
+		Chatter chatter = new ChatterService().get(event.getPlayer());
 		if (chatter.getActiveChannel() == null)
 			chatter.setActiveChannel(ChatManager.getMainChannel());
 		chatter.updateChannels();

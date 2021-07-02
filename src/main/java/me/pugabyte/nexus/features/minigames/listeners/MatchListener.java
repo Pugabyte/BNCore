@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
@@ -109,7 +109,7 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MatchQuitEvent event) {
+	public void onMatchQuit(MinigamerQuitEvent event) {
 		MatchManager.janitor();
 	}
 
@@ -305,7 +305,7 @@ public class MatchListener implements Listener {
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
+		if (arena.ownsRegion(event.getRegion(), "kill"))
 			mechanic.kill(minigamer);
 	}
 

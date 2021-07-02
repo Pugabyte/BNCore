@@ -42,6 +42,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -522,6 +523,20 @@ public class PlayerUtils {
 		if (advancements.containsKey(name))
 			return advancements.get(name);
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
+	}
+
+	public static void removeItems(HasPlayer player, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			removeItem(player, item);
+		}
+	}
+
+	public static void removeItem(HasPlayer player, ItemStack item) {
+		final Player _player = player.getPlayer();
+		final PlayerInventory inv = _player.getInventory();
+		inv.removeItem(item);
+		if (_player.getItemOnCursor().equals(item))
+			_player.setItemOnCursor(null);
 	}
 
 	public static void giveItem(HasPlayer player, Material material) {

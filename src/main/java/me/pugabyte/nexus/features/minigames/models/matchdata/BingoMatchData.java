@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
@@ -39,10 +40,10 @@ public class BingoMatchData extends MatchData {
 				challenges[i][j] = iterator.next();
 	}
 
-	public void spawnpoint(Minigamer minigamer, Location location) {
+	public CompletableFuture<Void> spawnpoint(Minigamer minigamer, Location location) {
 		location = getCenteredLocation(location.clone().add(0, 2, 0));
-		minigamer.teleport(location, true);
 		spawnpoints.put(minigamer.getUniqueId(), location);
+		return minigamer.teleport(location, true);
 	}
 
 	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Class<? extends T> clazz) {

@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -39,8 +40,7 @@ public class AmbientSounds extends Feature {
 				Sound sound = RandomUtils.randomElement(undergroundSounds);
 				Map<Player, Integer> tempMap = new HashMap<>(undergroundTaskMap);
 
-				tempMap.forEach((player, integer) ->
-						SoundUtils.playSound(player, sound, SoundCategory.AMBIENT, 0.5F, 0.1F));
+				tempMap.forEach((player, integer) -> new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play());
 			}
 		});
 
@@ -66,8 +66,7 @@ public class AmbientSounds extends Feature {
 
 	private void startLoop(Player player, AmbientSoundType type) {
 		if (type.equals(UNDERGROUND)) {
-			int taskId = Tasks.repeat(0, Time.SECOND.x(37), () ->
-					SoundUtils.playSound(player, undergroundLoop, SoundCategory.AMBIENT, 2F, 1F));
+			int taskId = Tasks.repeat(0, Time.SECOND.x(37), () -> new SoundBuilder(undergroundLoop).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
 
 			undergroundTaskMap.put(player, taskId);
 		}

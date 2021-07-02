@@ -6,8 +6,10 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.entity.EntityType;
@@ -24,6 +26,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -138,6 +141,37 @@ public class Utils extends eden.utils.Utils {
 		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
+	@SneakyThrows
+	public static Number getMaxValue(Class<?> type) {
+		return (Number) getMinMaxHolder(type).getDeclaredField("MAX_VALUE").get(null);
+	}
+
+	@SneakyThrows
+	public static Number getMinValue(Class<?> type) {
+		return (Number) getMinMaxHolder(type).getDeclaredField("MIN_VALUE").get(null);
+	}
+
+	public static Class<?> getMinMaxHolder(Class<?> type) {
+		if (Integer.class == type || Integer.TYPE == type) return Integer.class;
+		if (Double.class == type || Double.TYPE == type) return Double.class;
+		if (Float.class == type || Float.TYPE == type) return Float.class;
+		if (Short.class == type || Short.TYPE == type) return Short.class;
+		if (Long.class == type || Long.TYPE == type) return Long.class;
+		if (Byte.class == type || Byte.TYPE == type) return Byte.class;
+		if (BigDecimal.class == type) return Double.class;
+		throw new InvalidInputException("No min/max holder defined for " + type.getSimpleName());
+	}
+
+	public static boolean isWithinBounds(double number, Class<?> type) {
+		return isWithinBounds(BigDecimal.valueOf(number), type);
+	}
+
+	public static boolean isWithinBounds(BigDecimal number, Class<?> type) {
+		final BigDecimal min = BigDecimal.valueOf(getMinValue(type).doubleValue());
+		final BigDecimal max = BigDecimal.valueOf(getMaxValue(type).doubleValue());
+		return number.compareTo(min) >= 0 && number.compareTo(max) <= 0;
+	}
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	public @interface SerializedExclude {}
@@ -162,5 +196,11 @@ public class Utils extends eden.utils.Utils {
 		from.removeIf(player -> player.getUniqueId().equals(entity.getUniqueId()));
 	}
 
+	@Contract(value = "null, _ -> fail; _, _ -> param1", pure = true)
+	public static <T> T notNull(T object, String error) {
+		if (object == null)
+			throw new InvalidInputException(error);
+		return object;
+	}
 
 }

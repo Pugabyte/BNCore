@@ -64,7 +64,7 @@ public class AutoDepositQuick implements Listener {
 		else if (deposits.getTotalItems() == 0)
 			send(player, PREFIX + "&cNo items deposited &3- none of your inventory items match items in that " + materialName);
 		else
-			send(player, PREFIX + "Deposited &e%o &3items", deposits.getTotalItems());
+			send(player, PREFIX + "Deposited &e%d &3items", deposits.getTotalItems());
 	}
 
 }

@@ -396,21 +396,19 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	private void solderItem(ItemStack piece, ArmorStand armorStand, Player player) {
 		ItemStack air = new ItemStack(Material.AIR);
 
-		armorStand.getEquipment().setItemInMainHand(piece);
+		armorStand.setItem(EquipmentSlot.HAND, piece);
 		Location loc = new Location(BearFair20.getWorld(), -1182, 137, -1756);
 		loc = LocationUtils.getCenteredLocation(loc);
 		loc.setY(loc.getBlockY() + 0.5);
 		Location finalLoc = loc;
 		World world = loc.getWorld();
 
-		//
 		Tasks.wait(Time.SECOND.x(5), () -> {
-			armorStand.getEquipment().setItemInMainHand(air);
+			armorStand.setItem(EquipmentSlot.HAND, air);
 			PlayerUtils.giveItem(player, getArcadePiece(piece));
 			Tasks.wait(10, () -> activeSolder = false);
 			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 		});
-		//
 
 		Tasks.wait(5, () -> {
 			world.playSound(finalLoc, Sound.BLOCK_ANVIL_USE, 0.3F, 0.1F);

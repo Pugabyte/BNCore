@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -50,6 +51,26 @@ public class TrophyCommand extends CustomCommand {
 			service.save(holder);
 		} else
 			error(holder.getNickname() + " has already earned that trophy");
+	}
+
+	@Confirm
+	@Permission("group.admin")
+	@Path("remove <player> <trophy>")
+	void remove(TrophyHolder holder, Trophy trophy) {
+		holder.getEarned().remove(trophy);
+		holder.getClaimed().remove(trophy);
+		service.save(holder);
+		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
+	}
+
+	@Confirm
+	@Permission("group.admin")
+	@Path("reset <player>")
+	void reward(TrophyHolder holder) {
+		holder.getEarned().clear();
+		holder.getClaimed().clear();
+		service.save(holder);
+		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
 	}
 
 	@Permission("group.admin")

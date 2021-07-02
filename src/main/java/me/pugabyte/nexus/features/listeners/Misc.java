@@ -21,20 +21,26 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -59,6 +65,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -68,6 +75,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,6 +98,62 @@ public class Misc implements Listener {
 				continue;
 
 			world.setKeepSpawnInMemory(false);
+		}
+	}
+
+	@EventHandler
+	public void nbt_onDropItem(PlayerDropItemEvent event) {
+		final ItemStack item = event.getItemDrop().getItemStack();
+		if (isNullOrAir(item)) return;
+		if (!new ItemBuilder(item).isDroppable())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void nbt_onPlaceBlock(BlockPlaceEvent event) {
+		final ItemStack item = event.getItemInHand();
+		if (isNullOrAir(item)) return;
+		if (!new ItemBuilder(item).isPlaceable())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBeeCatch(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Bee bee))
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		final Player player = event.getPlayer();
+		ItemStack tool = getTool(player);
+		if (isNullOrAir(tool))
+			return;
+		if (!MaterialTag.ALL_BEEHIVES.isTagged(tool.getType()))
+			return;
+
+		final BlockStateMeta meta = (BlockStateMeta) tool.getItemMeta();
+		final Beehive beehive = (Beehive) meta.getBlockState();
+		int max = beehive.getMaxEntities();
+		int current = beehive.getEntityCount();
+
+		if (current < max) {
+			beehive.addEntity(bee);
+			meta.setBlockState(beehive);
+
+			if (tool.getAmount() == 1)
+				tool.setItemMeta(meta);
+			else {
+				tool = ItemBuilder.oneOf(tool).build();
+				player.getInventory().removeItem(tool);
+				tool.setItemMeta(meta);
+				PlayerUtils.giveItem(player, tool);
+			}
+
+			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
+				.location(player.getLocation())
+				.category(SoundCategory.BLOCKS)
+				.play();
 		}
 	}
 

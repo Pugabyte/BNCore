@@ -40,6 +40,9 @@ public class LocationsCommand extends CustomCommand {
 
 				send(json()
 						.next("&f  " + Nerd.of(target).getColoredName() + "  ")
+						.copy(target.getUniqueId().toString())
+						.hover("&fClick to copy UUID")
+						.group()
 						.next(Component.text(getCoordinateString(target.getLocation()), NamedTextColor.YELLOW))
 						.next(Component.text("  " + TimespanBuilder.of(playtimeSeconds).noneDisplay(true).format(), playtimeColor))
 						.command("/tp " + target.getName()));

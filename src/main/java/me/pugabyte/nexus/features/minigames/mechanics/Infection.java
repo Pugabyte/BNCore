@@ -32,12 +32,12 @@ public class Infection extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ZOMBIE_HEAD);
 	}
 
 	@Override
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return item.getType() == Material.ARROW;
 	}
 
@@ -81,13 +81,13 @@ public class Infection extends TeamMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		getZombies(event.getMatch()).forEach(Minigamer::respawn);
 		super.onStart(event);
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		boolean humansAlive = getHumans(match).size() > 0;
 
 		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
@@ -100,7 +100,7 @@ public class Infection extends TeamMechanic {
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer victim = event.getMinigamer();
 		Minigamer attacker = event.getAttacker();
 

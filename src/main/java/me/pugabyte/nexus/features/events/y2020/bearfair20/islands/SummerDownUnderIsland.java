@@ -78,14 +78,14 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("Hey bro, welcome to Queen’s Island!");
+				startQuest.add("Hey bro, welcome to Queen's Island!");
 				startQuest.add("wait 80");
 				startQuest.add("<self> Thanks, Friend! I was hoping you could tell me about this thing called an ANZAC Biscuit?");
 				startQuest.add("wait 80");
-				startQuest.add("Don’t know too much about it bro, but you should hit up the ANZAC Statue in the centre of town. " +
-						"There’s bound to be someone there you can talk to!");
+				startQuest.add("Don't know too much about it bro, but you should hit up the ANZAC Statue in the centre of town. " +
+						"There's bound to be someone there you can talk to!");
 				startQuest.add("wait 120");
-				startQuest.add("Oh and don’t forget to say G’day to everyone around town.");
+				startQuest.add("Oh and don't forget to say G'day to everyone around town.");
 
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList(RandomUtils.randomElement(greetings));
@@ -110,21 +110,21 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				startQuest.add("wait 80");
 				startQuest.add("<self> I was hoping you could tell me how to get whatever an ANZAC Biscuit is?");
 				startQuest.add("wait 80");
-				startQuest.add("Well mate, it’s a biscuit the blokes and I used to get in the trenches back in the First World War. " +
+				startQuest.add("Well mate, it's a biscuit the blokes and I used to get in the trenches back in the First World War. " +
 						"It was sent all the bloody way from Australia to the Western Front. " +
-						"It used to be a pretty common commodity in these parts and a damn good bikkie if I don’t say so myself.");
+						"It used to be a pretty common commodity in these parts and a damn good bikkie if I don't say so myself.");
 				startQuest.add("wait 200");
-				startQuest.add("Unfortunately we don’t have any on hand, outta supply for months! " +
-						"But I can tell ya what you’re gonna need to make one yourself.");
+				startQuest.add("Unfortunately we don't have any on hand, outta supply for months! " +
+						"But I can tell ya what you're gonna need to make one yourself.");
 				startQuest.add("wait 120");
-				startQuest.add("You’ll need the following ingredients; Wheat, Sugar, Peanuts & Golden Syrup.");
+				startQuest.add("You'll need the following ingredients; Wheat, Sugar, Peanuts & Golden Syrup.");
 				startQuest.add("wait 80");
-				startQuest.add("I highly recommend you visit the Queen’s Island Pie Shop once you have what you need, I’m sure they’d be happy to help.");
+				startQuest.add("I highly recommend you visit the Queen's Island Pie Shop once you have what you need, I'm sure they'd be happy to help.");
 				startQuest.add("wait 120");
 				startQuest.add("<self> Thank you for your service. Any ideas where I should start?");
 				startQuest.add("wait 80");
-				startQuest.add("There’ll be a cheeky farm across the bridge you can have a gawk at. " +
-						"Afterwards, I’d recommend talking to my grandson Lachlan at the Pub. " +
+				startQuest.add("There'll be a cheeky farm across the bridge you can have a gawk at. " +
+						"Afterwards, I'd recommend talking to my grandson Lachlan at the Pub. " +
 						"He should be able to sort you out with something.");
 
 				if (!user.isQuest_SDU_Start() || step < 1)
@@ -134,11 +134,11 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 					return Arrays.asList(
 							"Have you gathered all the ingredients up yet? You need Wheat, Sugar, Peanuts & Golden Syrup.",
 							"wait 80",
-							"For some wheat, there’s a cheeky farm across the bridge you can have a gawk at. " +
-									"Afterwards, I’d recommend talking to my grandson Lachlan at the Pub. " +
+							"For some wheat, there's a cheeky farm across the bridge you can have a gawk at. " +
+									"Afterwards, I'd recommend talking to my grandson Lachlan at the Pub. " +
 									"He should be able to sort you out with something.",
 							"wait 120",
-							"And I highly recommend you visit the Queen’s Island Pie Shop once you have what you need, I’m sure they’d be happy to help."
+							"And I highly recommend you visit the Queen's Island Pie Shop once you have what you need, I'm sure they'd be happy to help."
 					);
 
 				nextStep(player); // 2
@@ -146,12 +146,12 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 			}
 		},
 		FARMER(2752, new ArrayList<>() {{
-			add("G’day g’day, the crops are fresh and lookin’ real mean");
+			add("G'day g'day, the crops are fresh and lookin' real mean");
 			add("wait 80");
-			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven’t had those around here for months! " +
-					"Take all the wheat you need chief, it’s for a bloody great cause.");
+			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven't had those around here for months! " +
+					"Take all the wheat you need chief, it's for a bloody great cause.");
 			add("wait 120");
-			add("You’ll need Sugar too. I’m pretty sure the Main Island has some sugar cane you could abscond with mate. Good luck!");
+			add("You'll need Sugar too. I'm pretty sure the Main Island has some sugar cane you could abscond with mate. Good luck!");
 		}}),
 		LACHLAN(2747) {
 			@Override
@@ -161,24 +161,24 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("Hey mate, my grandad told me you were headed here. Look, here’s the situation. " +
-						"I’d love to help out; but I need you to do me a favour first.");
+				startQuest.add("Hey mate, my grandad told me you were headed here. Look, here's the situation. " +
+						"I'd love to help out; but I need you to do me a favour first.");
 				startQuest.add("wait 120");
 				startQuest.add("Somehow, my delivery is missing a whole case of Great Northerns. One that I need to sell at the " +
-						"gatho tonight with the town. I suspect it’s been stolen. If you could find it for me and bring it back, " +
-						"I’ll give ya all the peanuts you need.");
+						"gatho tonight with the town. I suspect it's been stolen. If you could find it for me and bring it back, " +
+						"I'll give ya all the peanuts you need.");
 				startQuest.add("wait 160");
 				startQuest.add("Good luck mate! Happy hunting.");
 
 				List<String> endQuest = new ArrayList<>();
-				endQuest.add("No way! You’re an absolute legend mate. When the gatho starts, we’d love to have you over. " +
-						"Once the boys find out you rescued the bevvies they’ll love ya!");
+				endQuest.add("No way! You're an absolute legend mate. When the gatho starts, we'd love to have you over. " +
+						"Once the boys find out you rescued the bevvies they'll love ya!");
 				endQuest.add("wait 120");
-				endQuest.add("Here’s the Peanuts, they’re pretty high quality stuff. I can’t just give you anything for that ANZAC Biscuit, hey?");
+				endQuest.add("Here's the Peanuts, they're pretty high quality stuff. I can't just give you anything for that ANZAC Biscuit, hey?");
 				endQuest.add("wait 80");
 				endQuest.add("<self> What about the Golden Syrup?");
 				endQuest.add("wait 80");
-				endQuest.add("Yeah nah unfortunately I don’t have any on hand, but if you knock on some doors around town there’ll " +
+				endQuest.add("Yeah nah unfortunately I don't have any on hand, but if you knock on some doors around town there'll " +
 						"definitely be some available. Thanks again mate.");
 
 				if (!user.isQuest_SDU_Start() || step < 2)
@@ -242,26 +242,26 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				startQuest.add("Hi! What will it be for today?");
 				startQuest.add("wait 80");
 				startQuest.add("<self> Uh, hey! I was wondering if you guys could bake these ANZAC Biscuits for me? I have all the ingredients " +
-						"but I can’t make it myself. I’m new here!");
+						"but I can't make it myself. I'm new here!");
 				startQuest.add("wait 80");
-				startQuest.add("If it were up to me, sure! But you’ll need to speak with my Manager first. He’s really picky about these things.");
+				startQuest.add("If it were up to me, sure! But you'll need to speak with my Manager first. He's really picky about these things.");
 
 				List<String> endQuest_gold = new ArrayList<>();
-				endQuest_gold.add("<self> Here’s the gold your manager wanted. Can you bake it now please?");
+				endQuest_gold.add("<self> Here's the gold your manager wanted. Can you bake it now please?");
 				endQuest_gold.add("wait 80");
 				endQuest_gold.add("Thanks! Alright now lets see what we can do...");
 				endQuest_gold.add("wait 80");
-				endQuest_gold.add("Here’s your Biscuit! Like we said earlier, I’ll take the rest and give them out around town! Best of luck in " +
+				endQuest_gold.add("Here's your Biscuit! Like we said earlier, I'll take the rest and give them out around town! Best of luck in " +
 						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
 
 				List<String> endQuest_fool = new ArrayList<>();
-				endQuest_fool.add("<self> Here’s the gold your manager wanted. Can you bake it now please?");
+				endQuest_fool.add("<self> Here's the gold your manager wanted. Can you bake it now please?");
 				endQuest_fool.add("wait 80");
-				endQuest_fool.add("I can see you have Fool’s Gold there, honestly, just give me that. He won’t notice!");
+				endQuest_fool.add("I can see you have Fool's Gold there, honestly, just give me that. He won't notice!");
 				endQuest_fool.add("wait 80");
 				endQuest_fool.add("Thanks! Alright now lets see what we can do...");
 				endQuest_fool.add("wait 80");
-				endQuest_fool.add("Here’s your Biscuit! Like we said earlier, I’ll take the rest and give them out around town! Best of luck in " +
+				endQuest_fool.add("Here's your Biscuit! Like we said earlier, I'll take the rest and give them out around town! Best of luck in " +
 						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
 
 				if (!user.isQuest_SDU_Start() || step < 5 || user.isQuest_SDU_Finish())
@@ -301,7 +301,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 					return Collections.singletonList("You need the ingredients to the Anzac Biscuit and a nugget of gold, fool's gold works too, my manager can't tell the difference.");
 
 				if (step >= 6)
-					return Collections.singletonList("You’ll need to speak with my Manager first.");
+					return Collections.singletonList("You'll need to speak with my Manager first.");
 
 				nextStep(player); // 6
 				return startQuest;
@@ -318,18 +318,18 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				startQuest.add("What? Who are you, what do you want?");
 				startQuest.add("wait 80");
 				startQuest.add("<self> I was wondering if you could bake these ANZAC Biscuits for me? I just need one to take back with me and " +
-						"Queen’s Island can keep the rest!");
+						"Queen's Island can keep the rest!");
 				startQuest.add("wait 80");
-				startQuest.add("Excuse me? You’ll need to pay for that mate! No pay, no bake.");
+				startQuest.add("Excuse me? You'll need to pay for that mate! No pay, no bake.");
 				startQuest.add("wait 80");
-				startQuest.add("If you don’t have any gold, there’s a whole mineshaft nearby. " +
-						"They usually mine coal but recently they’ve been sifting for gold.");
+				startQuest.add("If you don't have any gold, there's a whole mineshaft nearby. " +
+						"They usually mine coal but recently they've been sifting for gold.");
 
 				if (!user.isQuest_SDU_Start() || step < 6)
 					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 7)
-					return Collections.singletonList("Did you forget already? If you don’t have any gold, there’s a whole mineshaft nearby. Now get out!");
+					return Collections.singletonList("Did you forget already? If you don't have any gold, there's a whole mineshaft nearby. Now get out!");
 
 				nextStep(player); // 7
 				return startQuest;
@@ -345,7 +345,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Xin Chao friend! You want to sift?");
 				startQuest.add("wait 80");
-				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. You can keep any other gold or fool’s gold you find.");
+				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. You can keep any other gold or fool's gold you find.");
 
 				if (!user.isQuest_SDU_Start() || step < 7)
 					return Collections.singletonList(RandomUtils.randomElement(greetings));
@@ -363,24 +363,24 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 		},
 		//
 		// Clutter NPCs
-		DYLAN(2915, Collections.singletonList("These snags are lookin’ real hot boys hope you’re ready")),
+		DYLAN(2915, Collections.singletonList("These snags are lookin' real hot boys hope you're ready")),
 		MATT(2916, Collections.singletonList("OOOOOOH BOOOY IM READY FOR SOME SNAAAAAAAAAAGSSSS")),
-		MAX(2917, Collections.singletonList("Alright gents, if the snags are ready let’s get Lach and the boys from the pub here ASAP!")),
-		TALITHA(2933, Collections.singletonList("I’ll get the plates!")),
+		MAX(2917, Collections.singletonList("Alright gents, if the snags are ready let's get Lach and the boys from the pub here ASAP!")),
+		TALITHA(2933, Collections.singletonList("I'll get the plates!")),
 		DECLAN(2922, Collections.singletonList("Oiiii Lachlan ch..uck as anofer beer ya dawwgg!")),
-		CAMERON(2921, Collections.singletonList("Shut Up Declan we need to meet the boys at the Ablett’s!")),
-		JOSH(2918, Collections.singletonList("Uh, yeah, I’m the deso tonight so just some Soft Drink if you got any mate.")),
+		CAMERON(2921, Collections.singletonList("Shut Up Declan we need to meet the boys at the Ablett's!")),
+		JOSH(2918, Collections.singletonList("Uh, yeah, I'm the deso tonight so just some Soft Drink if you got any mate.")),
 		NIKKI(2944, Collections.singletonList("This view is amazing.")),
 		NICOLE(2945, Collections.singletonList("I know right… I love farming.")),
 		GRIFFIN(2931, Collections.singletonList("Lest we Forget.")),
 		TRINITY(2932, Collections.singletonList("We Will Remember Them.")),
 		RYAN(2923, Collections.singletonList("Hey mate, wanna have a go in the ‘Lux?")),
 		FOREMAN(2927, Collections.singletonList("Who the bloody hell are ya? I have work to do mate, get lost!")),
-		DRIVER(2930, Collections.singletonList("Oh man… Lachlan’s gonna kill me. Where is that damn case?")),
-		TALISHA(2939, Collections.singletonList("Can you have a squiz at the drinks and suggest anything good? I’m new in town!")),
-		TAYLOR(2940, Collections.singletonList("Hey! You must be new here, hope you’re having a ball!")),
-		LUCY(2941, Collections.singletonList("We should probably get going soon, I think the party’s almost started. Wanna tag along?")),
-		CHRIS(2942, Collections.singletonList("MmmmMmm! Just as good as I remember. Hope I’m not late for the gatho!"));
+		DRIVER(2930, Collections.singletonList("Oh man… Lachlan's gonna kill me. Where is that damn case?")),
+		TALISHA(2939, Collections.singletonList("Can you have a squiz at the drinks and suggest anything good? I'm new in town!")),
+		TAYLOR(2940, Collections.singletonList("Hey! You must be new here, hope you're having a ball!")),
+		LUCY(2941, Collections.singletonList("We should probably get going soon, I think the party's almost started. Wanna tag along?")),
+		CHRIS(2942, Collections.singletonList("MmmmMmm! Just as good as I remember. Hope I'm not late for the gatho!"));
 
 		@Getter
 		private final int npcId;

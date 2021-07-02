@@ -6,7 +6,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
@@ -154,7 +154,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MatchQuitEvent event) {
+	public void onMatchQuit(MinigamerQuitEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		if (user.isActive() && user.getOfflinePlayer().isOnline())

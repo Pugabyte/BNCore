@@ -40,6 +40,7 @@ public class ChatManager {
 	private static PublicChannel mainChannel;
 
 	public static PublicChannel getChannel(String id) {
+		if (id == null) return null;
 		Optional<PublicChannel> channel = channels.stream().filter(_channel -> _channel.getNickname().equalsIgnoreCase(id)).findFirst();
 		if (!channel.isPresent())
 			channel = channels.stream().filter(_channel -> _channel.getName().equalsIgnoreCase(id)).findFirst();

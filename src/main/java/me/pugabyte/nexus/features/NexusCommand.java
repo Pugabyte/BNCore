@@ -64,12 +64,13 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
@@ -113,7 +114,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
-import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +123,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,6 +158,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		shutdownBossBars();
 	}
 
+	@Path("soundTest")
+	void soundTest() {
+		new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(player()).volume(.25).play();
+	}
+
 	@Path("cancelReload")
 	void cancelReload() {
 		reloader = null;
@@ -180,7 +184,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
-				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
+				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))
@@ -462,26 +466,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("getEnv")
 	void getEnv() {
 		send(Nexus.getEnv().name());
-	}
-
-	@Path("clearCache <service>")
-	void clearCache(MongoService service) {
-		service.clearCache();
-		send(PREFIX + service.getClass().getSimpleName() + " cached cleared");
-	}
-
-	@Path("cacheSize <service>")
-	void cacheSize(MongoService service) {
-		send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size());
-	}
-
-	@SneakyThrows
-	@Path("allCacheSizes")
-	void allCacheSizes() {
-		services.values().stream()
-				.sorted(Comparator.comparing(service -> service.getCache().size()))
-				.forEach(service ->
-						send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size()));
 	}
 
 	@Path("setFirstJoin <player> <date>")
@@ -1063,6 +1047,15 @@ public class NexusCommand extends CustomCommand implements Listener {
 		runCommand("npc tphere");
 	}
 
+	@Path("testTradeable [tradeable]")
+	void testTradeable(Boolean tradeable) {
+		ItemBuilder item = new ItemBuilder(inventory().getItemInMainHand());
+		if (tradeable != null)
+			item.tradeable(tradeable);
+		Tasks.wait(1, () -> inventory().setItemInMainHand(item.build()));
+		Tasks.wait(2, () -> send(String.valueOf(new ItemBuilder(inventory().getItemInMainHand()).isTradeable())));
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return Nerd.of(convertToOfflinePlayer(value));
@@ -1071,33 +1064,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@TabCompleterFor(Nerd.class)
 	List<String> tabCompleteNerd(String value) {
 		return tabCompletePlayer(value);
-	}
-
-	private static final Map<String, MongoService> services = new HashMap<>();
-
-	static {
-		Reflections reflections = new Reflections(Nexus.class.getPackage().getName() + ".models");
-		for (Class<? extends MongoService> service : reflections.getSubTypesOf(MongoService.class)) {
-			try {
-				services.put(service.getSimpleName(), service.newInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@ConverterFor(MongoService.class)
-	MongoService convertToMongoService(String value) {
-		if (!services.containsKey(value))
-			error("Service &e" + value + " &cnot found");
-		return services.get(value);
-	}
-
-	@TabCompleterFor(MongoService.class)
-	List<String> tabCompleteMongoService(String value) {
-		return services.keySet().stream()
-				.filter(serviceName -> serviceName.toLowerCase().startsWith(value.toLowerCase()))
-				.collect(Collectors.toList());
 	}
 
 	@ConverterFor(StaffMember.class)

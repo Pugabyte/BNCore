@@ -48,6 +48,7 @@ public class CheatsCommand extends CustomCommand {
 				player().setGameMode(GameMode.SURVIVAL);
 				player().setFallDistance(0);
 			}
+			runCommand("wgedit off");
 
 			send(PREFIX + "&cDisabled");
 		}

@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class Quests {
 
 	@Getter
 	@AllArgsConstructor
-	public enum Pugmas20Quest implements Quest {
+	public enum Pugmas20Quest implements Quest<Pugmas20User> {
 		GIFT_GIVER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.JADE.getName() + " in the Workshop");
 		}}),
@@ -85,15 +85,15 @@ public class Quests {
 	}
 
 	public static void sound_obtainItem(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 2F);
+		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5F).pitch(2F).play();
 	}
 
 	public static void sound_villagerNo(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, 0.5F, 1F);
+		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(0.5F).pitch(1F).play();
 	}
 
 	public static void sound_npcAlert(Player player) {
-		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5F, 1F);
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(0.5F).pitch(1F).play();
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

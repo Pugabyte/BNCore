@@ -441,11 +441,6 @@ public class MinigamesCommand extends CustomCommand {
 		if (!WGUtils.isInRegion(location(), "minigamelobby"))
 			error("You must be in the Minigame Lobby to use this command");
 
-		Collection<Player> players = WGUtils.getPlayersInRegion("minigamelobby");
-		int count = players.size() - 1;
-		if (count == 0)
-			error("There is no one to invite!");
-
 		if (WGUtils.isInRegion(location(), "screenshot")) {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
@@ -493,6 +488,11 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Path("invite")
 	void invite() {
+		Collection<Player> players = new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby");
+		int count = players.size() - 1;
+		if (count == 0)
+			error("There is no one to invite!");
+
 		updateInvite();
 		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
 	}

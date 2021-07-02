@@ -2,6 +2,7 @@ package me.pugabyte.nexus.models;
 
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.mail.Mailer.Mail;
@@ -106,6 +107,16 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 
 	default boolean hasNickname() {
 		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
+	}
+
+	default void debug(String message) {
+		if (Nexus.isDebug())
+			sendMessage(message);
+	}
+
+	default void debug(ComponentLike message) {
+		if (Nexus.isDebug())
+			sendMessage(message);
 	}
 
 	default void sendMessage(String message) {

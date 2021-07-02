@@ -20,7 +20,7 @@ public final class FourTeamDeathmatch extends DeathmatchMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.DIAMOND_SWORD);
 	}
 

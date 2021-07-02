@@ -5,6 +5,7 @@ import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -34,7 +35,7 @@ public class SabotageArena extends Arena {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public @NotNull Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
 		map.put("killCooldown", killCooldown);
 		map.put("meetingCooldown", meetingCooldown);

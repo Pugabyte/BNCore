@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
@@ -25,7 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO BF21: setup npc to start the game
 public class Seeker implements Listener {
 	private static final World world = BearFair21.getWorld();
 	private static final Map<Location, BlockFace> locationsMap = new HashMap<>() {{
@@ -62,6 +62,10 @@ public class Seeker implements Listener {
 		playersMap.remove(player.getUniqueId());
 	}
 
+	public static boolean isPlaying(Player player) {
+		return playersMap.containsKey(player.getUniqueId());
+	}
+
 	private void updateTask() {
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			if (playersMap.size() == 0)
@@ -91,22 +95,24 @@ public class Seeker implements Listener {
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
-		if (BearFair21.isNotAtBearFair(event))
-			return;
+		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Player player = event.getPlayer();
-		UUID uuid = player.getUniqueId();
-		if (!playersMap.containsKey(uuid)) return;
-		if (event.getClickedBlock() == null) return;
+		if (!isPlaying(player)) return;
 
-		Location blockLocation = event.getClickedBlock().getLocation();
-		if (!LocationUtils.blockLocationsEqual(blockLocation, playersMap.get(uuid))) return;
+		Block block = event.getClickedBlock();
+		if (block == null)
+			return;
+
+		Location blockLocation = block.getLocation();
+		if (!LocationUtils.blockLocationsEqual(blockLocation, playersMap.get(player.getUniqueId())))
+			return;
 
 		event.setCancelled(true);
 
 		removePlayer(player);
 		player.sendBlockChange(blockLocation, blockLocation.getBlock().getBlockData());
 
-		BearFair21.giveDailyPoints(player, BF21PointSource.SEEKER, 5);
+		BearFair21.giveDailyTokens(player, BF21PointSource.SEEKER, 25);
 	}
 }

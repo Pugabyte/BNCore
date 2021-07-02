@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.GrabAJumbuckArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -52,7 +52,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.WHITE_WOOL);
 	}
 
@@ -62,13 +62,13 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		spawnSheep(event.getMatch(), 20);
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		Match match = event.getMatch();
 		match.getMinigamers().forEach((player) -> removeAllPassengers(player.getPlayer(), match));
 		GrabAJumbuckMatchData matchData = match.getMatchData();
@@ -81,7 +81,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		removeAllPassengers(event.getMinigamer().getPlayer(), event.getMatch());
 	}

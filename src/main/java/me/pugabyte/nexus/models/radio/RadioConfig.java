@@ -58,20 +58,16 @@ public class RadioConfig implements PlayerOwnedObject {
 
 	public void addSong(Radio radio, RadioSong song) {
 		Radio _radio = getById(radio.getId());
-//		radios.remove(_radio);
 		Set<String> songs = _radio.getSongs();
 		songs.add(song.getName());
 		_radio.setSongs(songs);
-//		radios.add(_radio);
 	}
 
 	public void removeSong(Radio radio, RadioSong song) {
 		Radio _radio = getById(radio.getId());
-//		radios.remove(_radio);
 		Set<String> songs = _radio.getSongs();
-		songs.add(song.getName());
+		songs.remove(song.getName());
 		_radio.setSongs(songs);
-//		radios.add(_radio);
 	}
 
 	@Data
@@ -149,4 +145,18 @@ public class RadioConfig implements PlayerOwnedObject {
 		}
 	}
 
+
+	public enum RadioType {
+		SERVER,
+		RADIUS
+	}
+
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class RadioSong {
+		private String name;
+		private File file;
+
+	}
 }

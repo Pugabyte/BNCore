@@ -61,7 +61,7 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		if (user.getFoundComboLockNumbers().contains(number)) {
-			PlayerUtils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there’s some more.");
+			PlayerUtils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there's some more.");
 			return;
 		}
 		user.getFoundComboLockNumbers().add(number);

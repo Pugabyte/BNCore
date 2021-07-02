@@ -1,33 +1,42 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources;
 
+import eden.utils.StringUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.SoundUtils.playSound;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Mining implements Listener {
 	public static String taskId = "bearfair21-ore-regen";
@@ -66,11 +75,18 @@ public class Mining implements Listener {
 		if (oreType == null)
 			return false;
 
-		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType()))
-			return false;
+		ItemStack tool = player.getInventory().getItemInMainHand();
+		if (!oreType.canBeMinedBy(tool.getType())) {
+			if (new CooldownService().check(player, "BF21_cantbreak_tool", Time.SECOND.x(15))) {
+				send(Errors.cantBreak + " with this tool. Needs either: " + oreType.getCanBreak(), player);
+				Quests.sound_villagerNo(player);
+			}
+			return true;
+		}
 
-		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
-		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
+		Quests.giveExp(player);
+		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
+		PlayerUtils.giveItem(player, oreType.getIngotItemStack(tool));
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -102,14 +118,23 @@ public class Mining implements Listener {
 		private final Material pickaxe;
 
 		private static final List<Material> pickaxeOrder = Arrays.asList(Material.WOODEN_PICKAXE, Material.GOLDEN_PICKAXE,
-				Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
+			Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
 
 		public static List<Material> getOres() {
 			return Arrays.stream(values()).map(OreType::getOre).toList();
 		}
 
-		public ItemStack getIngotItemStack() {
-			return new ItemBuilder(ingot).amount(RandomUtils.randomInt(min, max)).build();
+		public ItemStack getIngotItemStack(ItemStack tool) {
+			ItemMeta meta = tool.getItemMeta();
+			int level = 1;
+			if (meta.hasEnchants()) {
+				if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LOOT_BONUS_BLOCKS))) {
+					level = meta.getEnchants().get(Enchantment.LOOT_BONUS_BLOCKS);
+				}
+			}
+
+			int amount = RandomUtils.randomInt(min, max) * RandomUtils.randomInt(1, level);
+			return new ItemBuilder(ingot).amount(amount).build();
 		}
 
 		public static OreType ofOre(Material ore) {
@@ -121,6 +146,16 @@ public class Mining implements Listener {
 
 		public boolean canBeMinedBy(Material pickaxe) {
 			return pickaxeOrder.indexOf(pickaxe) >= pickaxeOrder.indexOf(this.getPickaxe());
+		}
+
+		public String getCanBreak() {
+			List<Material> result = new ArrayList<>();
+			for (Material material : pickaxeOrder) {
+				if (canBeMinedBy(material))
+					result.add(material);
+			}
+
+			return result.stream().map(StringUtils::camelCase).collect(Collectors.joining(", "));
 		}
 	}
 }

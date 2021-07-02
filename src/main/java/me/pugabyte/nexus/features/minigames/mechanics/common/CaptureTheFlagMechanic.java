@@ -13,7 +13,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.TitleUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -24,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
-	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
 		return !(PlayerParticlePerk.class.isAssignableFrom(perk)) || (
 				minigamer.getMatch().getMatchData() instanceof CaptureTheFlagMatchData ?
 						((CaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagByCarrier(minigamer) != null
@@ -127,8 +128,8 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		if (chat && !minigamers.isEmpty())
 			minigamers.get(0).getMatch().broadcast(message);
 		minigamers.forEach(enemy -> {
-			SoundUtils.playSound(enemy.getPlayer(), sound, SoundCategory.PLAYERS, volume, 1.2f);
-			SoundUtils.playSound(enemy.getPlayer(), Sound.ENTITY_ENDER_DRAGON_FLAP, SoundCategory.PLAYERS, 0.9f, 1.0f);
+			new SoundBuilder(sound).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(volume).pitch(1.2).play();
+			new SoundBuilder(Sound.ENTITY_ENDER_DRAGON_FLAP).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(0.9).play();
 			TitleUtils.sendSubtitle(enemy.getPlayer(), message, 7, Time.SECOND.x(3), 7);
 		});
 	}

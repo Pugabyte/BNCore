@@ -25,7 +25,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ARROW);
 	}
 
@@ -35,7 +35,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getAttacker() != null) {
 			event.getAttacker().getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
 			event.getAttacker().scored();

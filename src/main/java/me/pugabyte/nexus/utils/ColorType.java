@@ -184,7 +184,7 @@ public enum ColorType implements IsColored {
 	@Nullable
 	public static ColorType of(@Nullable String name) {
 		if (name == null) return null;
-		return Arrays.stream(values()).filter(colorType -> colorType.getName().equals(name)).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 
 	@Nullable

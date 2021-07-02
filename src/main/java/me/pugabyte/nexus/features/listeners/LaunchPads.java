@@ -14,6 +14,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -157,12 +158,14 @@ public class LaunchPads implements Listener {
 						}
 					});
 				} else {
-					if (fBlock != null) {
-						fBlock.remove();
-						launchPadBlockUUIDs.remove(fBlock.getUniqueId());
-					}
+					Tasks.wait(Time.SECOND, () -> {
+						if (fBlock != null) {
+							fBlock.remove();
+							launchPadBlockUUIDs.remove(fBlock.getUniqueId());
+						}
 
-					cancelLaunch(player);
+						cancelLaunch(player);
+					});
 				}
 			}
 		}));
@@ -183,10 +186,9 @@ public class LaunchPads implements Listener {
 
 		if (launchPadBlockUUIDs.contains(event.getEntity().getUniqueId()))
 			event.setCancelled(true);
-
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onDamage(final EntityDamageEvent event) {
 		Entity entity = event.getEntity();
 		if (!(entity instanceof Player player)) return;

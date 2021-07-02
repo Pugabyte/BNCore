@@ -112,12 +112,12 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.OAK_BOAT);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
@@ -137,12 +137,12 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public String getScoreboardTitle(Match match) {
+	public @NotNull String getScoreboardTitle(@NotNull Match match) {
 		return "&6&lBattleship";
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
 		BattleshipArena arena = match.getArena();
 		BattleshipMatchData matchData = match.getMatchData();
 
@@ -195,7 +195,7 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		Arena arena = event.getMatch().getArena();
 		List<ItemStack> items = new ArrayList<>();
 		for (ShipType shipType : ShipType.values())
@@ -229,8 +229,8 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public void begin(MatchBeginEvent event) {
-		super.begin(event);
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
 		start(event.getMatch());
 	}
 
@@ -539,14 +539,14 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public void onTurnStart(Match match, Team team) {
+	public void onTurnStart(@NotNull Match match, @NotNull Team team) {
 		match.broadcast(team, "Your turn");
 
 		super.onTurnStart(match, team);
 	}
 
 	@Override
-	public void onTurnEnd(Match match, Team team) {
+	public void onTurnEnd(@NotNull Match match, @NotNull Team team) {
 		BattleshipMatchData matchData = match.getMatchData();
 		Grid grid = matchData.getGrid(team);
 		if (grid.getAiming() != null) {
@@ -563,7 +563,7 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public void end(Match match) {
+	public void end(@NotNull Match match) {
 		BattleshipMatchData matchData = match.getMatchData();
 		matchData.end();
 		match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");

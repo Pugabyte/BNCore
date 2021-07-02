@@ -23,7 +23,6 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -94,12 +93,6 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("progress")
-	@Description("View your event progress")
-	void progress() {
-		progress(pugmasUser);
-	}
-
 	@Path("muteTrain [muted]")
 	@Description("Mute train sounds")
 	void muteTrain(Boolean muted) {
@@ -111,13 +104,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Train " + (muted ? "muted" : "unmuted"));
 	}
 
-	@Permission("group.staff")
-	@Path("admin progress <player>")
-	void adminProgress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
-		progress(user);
-	}
-
-	void progress(Pugmas20User user) {
+	@Path("progress [player]")
+	@Description("View your event progress")
+	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
@@ -341,33 +330,6 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			error("You cannot use this");
 
 		player().teleport(ToyTesting.getBackLocation(), TeleportCause.COMMAND);
-	}
-
-	@Confirm
-	@Permission("group.admin")
-	@Path("database delete [player]")
-	void databaseDelete(@Arg("self") Pugmas20User user) {
-		pugmasService.clearCache();
-		pugmasService.delete(user);
-		pugmasService.clearCache();
-		send(PREFIX + "Deleted data for " + user.getName());
-	}
-
-	@Confirm
-	@Permission("group.admin")
-	@Path("database deleteAll")
-	void databaseDelete() {
-		pugmasService.clearCache();
-		pugmasService.deleteAll();
-		pugmasService.clearCache();
-		send(PREFIX + "Deleted all data");
-	}
-
-	@Permission("group.admin")
-	@Path("database clearCache")
-	void databaseClearCache() {
-		pugmasService.clearCache();
-		send(PREFIX + "Cache cleared");
 	}
 
 	@Path("train")

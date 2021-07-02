@@ -39,6 +39,9 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBar(final HasPlayer player, final String message, int duration, boolean fade) {
+		if (player == null)
+			return;
+
 		Set<Integer> taskIds = playerTaskIds.getOrDefault(player.getPlayer().getUniqueId(), new HashSet<>());
 		Tasks.cancel(taskIds);
 		taskIds.clear();

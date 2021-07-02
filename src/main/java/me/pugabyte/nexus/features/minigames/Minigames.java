@@ -131,7 +131,10 @@ public class Minigames extends Feature {
 	}
 
 	public static void broadcast(ComponentLike component) {
-		getPlayers().forEach(player -> player.sendMessage(Minigames.COMPONENT_PREFIX.append(component)));
+		if (component == null) return;
+		final Component message = Minigames.COMPONENT_PREFIX.append(component);
+		getPlayers().forEach(player -> player.sendMessage(message));
+		System.out.println(AdventureUtils.asPlainText(message));
 	}
 
 	// Registration

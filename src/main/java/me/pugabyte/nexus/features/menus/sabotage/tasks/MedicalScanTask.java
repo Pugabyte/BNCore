@@ -15,7 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tas
 import me.pugabyte.nexus.features.particles.MathUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -60,7 +60,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 			double prog = progress.addAndGet(0.01);
 			double rawSecondsLeft = 10 - (prog * 10);
 			if (((prog * 10) % 1) < MathUtils.FLOAT_ROUNDING_ERROR)
-				tasks.sync(() -> SoundUtils.playSound(minigamer, Sound.BLOCK_NOTE_BLOCK_BIT));
+				tasks.sync(() -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(minigamer).play());
 
 			if (rawSecondsLeft <= 0)
 				tasks.sync(() -> {

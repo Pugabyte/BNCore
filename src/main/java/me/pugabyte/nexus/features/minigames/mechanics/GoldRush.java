@@ -50,17 +50,17 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.GOLD_INGOT);
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		GoldRushArena goldRushArena = match.getArena();
@@ -70,8 +70,8 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public void begin(MatchBeginEvent event) {
-		super.begin(event);
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
 		Match match = event.getMatch();
 		match.broadcast("Mine!");
 		for (Location location : match.getAliveTeams().get(0).getSpawnpoints())
@@ -81,7 +81,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		if (event.getMatch().isStarted()) {
 			GoldRushArena goldRushArena = event.getMatch().getArena();

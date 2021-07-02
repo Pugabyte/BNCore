@@ -17,6 +17,8 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,13 +31,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AntiCampingTask {
 	@NonNull
-	private Match match;
+	private final Match match;
 	private int taskId;
-	private int anticampingWarn = 6;
-	private int anticampingTeleport = 10;
+	private final int anticampingWarn = 6;
+	private final int anticampingTeleport = 10;
 
-	private Map<Minigamer, Integer> secondsCamping = new HashMap<>();
-	private Map<Minigamer, Location> recentLocations = new HashMap<>();
+	private final @NotNull Map<Minigamer, Integer> secondsCamping = new HashMap<>();
+	private final @NotNull Map<Minigamer, Location> recentLocations = new HashMap<>();
 
 	public void start() {
 		taskId = match.getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
@@ -80,11 +82,11 @@ public class AntiCampingTask {
 		match.getTasks().cancel(taskId);
 	}
 
-	private void teleport(Minigamer minigamer) {
+	private void teleport(@NotNull Minigamer minigamer) {
 		teleport(minigamer, -1);
 	}
 
-	private void teleport(Minigamer minigamer, int floorId) {
+	private void teleport(@NotNull Minigamer minigamer, int floorId) {
 		Arena arena = minigamer.getMatch().getArena();
 		Mechanic mechanic = arena.getMechanic();
 		ProtectedRegion floorAt;
@@ -154,14 +156,14 @@ public class AntiCampingTask {
 		}
 	}
 
-	private void teleport(Minigamer minigamer, Location to) {
+	private void teleport(@NotNull Minigamer minigamer, @NotNull Location to) {
 		to = LocationUtils.getCenteredLocation(to);
 		to.setYaw(minigamer.getPlayer().getLocation().getYaw());
 		to.setPitch(minigamer.getPlayer().getLocation().getPitch());
 		minigamer.teleport(to.add(0, 1, 0));
 	}
 
-	private ProtectedRegion getFloorAt(Minigamer minigamer) {
+	private @Nullable ProtectedRegion getFloorAt(@NotNull Minigamer minigamer) {
 		final String floorRegex = match.getArena().getRegionTypeRegex("floor");
 		Location location = minigamer.getPlayer().getLocation();
 		ProtectedRegion floor = null;

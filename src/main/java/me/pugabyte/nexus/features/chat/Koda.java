@@ -12,8 +12,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -62,7 +62,7 @@ public class Koda {
 	@Getter @NotNull
 	private static final UUID uuid = player.getUniqueId();
 	@Getter @NotNull
-	private static final Chatter chatter = new ChatService().get(player);
+	private static final Chatter chatter = new ChatterService().get(player);
 
 	public static void reply(@NotNull String message) {
 		Tasks.wait(10, () -> say(message));
@@ -227,7 +227,7 @@ public class Koda {
 				if ("Pugabyte".equals(event.getOrigin()))
 					respond(event, "You're the one who decided to make a potato do important things.");
 				else
-					respond(event, "Puga is the one who decided to make a potato do important things.");
+					respond(event, "Griffin is the one who decided to make a potato do important things.");
 				break;
 			case "griefing":
 				if (event.getChatter() != null)
@@ -239,7 +239,7 @@ public class Koda {
 				if (!event.getChatter().isOnline())
 					break;
 
-				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
+				int ping = event.getChatter().getOnlinePlayer().getPing();
 				double tps = Bukkit.getTPS()[1];
 
 				if (ping > 200 && tps > 16)

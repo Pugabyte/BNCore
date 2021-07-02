@@ -5,6 +5,7 @@ import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ public class DeathSwapArena extends Arena {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public @NotNull Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
 		map.put("schematicResetLocations", getSchematicResetLocations());
 

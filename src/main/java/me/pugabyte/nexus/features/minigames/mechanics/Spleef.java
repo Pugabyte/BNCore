@@ -23,7 +23,7 @@ public final class Spleef extends SpleefMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.DIAMOND_SHOVEL);
 	}
 

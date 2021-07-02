@@ -174,9 +174,9 @@ public class PugmasIsland implements Listener, BearFairIsland {
 				startQuest.add("wait 40");
 				startQuest.add("5:30, jazzercize; ");
 				startQuest.add("wait 40");
-				startQuest.add("6:30, dinner with me. I can’t cancel that again.");
+				startQuest.add("6:30, dinner with me. I can't cancel that again.");
 				startQuest.add("wait 40");
-				startQuest.add("See, I’m booked. So, I'll need you to sneak into each cabin in the town and steal one present, and grab a random one from under the tree, and give them to me.");
+				startQuest.add("See, I'm booked. So, I'll need you to sneak into each cabin in the town and steal one present, and grab a random one from under the tree, and give them to me.");
 				startQuest.add("wait 120");
 				startQuest.add("So, what do you say?");
 
@@ -218,7 +218,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 
 				if (step == 11) {
 					if (user.getPresentLocs().size() > 0 || user.isQuest_Pugmas_Switched())
-						return Collections.singletonList("If you utter so much as one syllable about this, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
+						return Collections.singletonList("If you utter so much as one syllable about this, I'LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you'd like to fax me, press the star key.");
 
 					Tasks.wait(540, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests npc switch_grinch").hover("Switch to Grinch's quest");

@@ -33,12 +33,12 @@ public final class Paintball extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.SNOWBALL);
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getAttacker() == null) return;
 		event.getAttacker().scored();
 		event.getAttacker().getMatch().scored(event.getAttacker().getTeam());

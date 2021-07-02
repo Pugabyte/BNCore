@@ -50,12 +50,12 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.FLINT_AND_STEEL);
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
 		matchData.setArmorStand(summonArmorStand(event.getMatch()));
@@ -68,7 +68,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		HoliSpleggMatchData matchData = match.getMatchData();
 		Map<String, Integer> lines = new HashMap<>();
 		lines.put("Time", matchData.getTime());
@@ -76,7 +76,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
 		for (Minigamer minigamer : event.getMatch().getMinigamers()) {
 			minigamer.setScore(matchData.getTime());

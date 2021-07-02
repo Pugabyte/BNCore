@@ -14,7 +14,7 @@ import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.ChatterService;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class MuteMenuUser implements PlayerOwnedObject {
 			return getVolume(item) == 0.0;
 
 		if (item.name().startsWith("CHANNEL_"))
-			return !new ChatService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
+			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else
 			return muted.contains(item);
 	}

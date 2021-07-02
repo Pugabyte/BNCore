@@ -76,7 +76,7 @@ public enum ComboLockNumber {
 			case NOT_STARTED -> PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
 			case STARTED -> {
 				if (user.getFoundComboLockNumbers().contains(this)) {
-					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
+					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there's some more.");
 					break;
 				}
 				user.getFoundComboLockNumbers().add(this);

@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.chat.events;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -55,7 +55,7 @@ public class DiscordChatEvent extends ChatEvent {
 		if (member != null) {
 			DiscordUser user = new DiscordUserService().getFromUserId(member.getUser().getId());
 			if (user != null)
-				return new ChatService().get(PlayerUtils.getPlayer(user.getUuid()));
+				return new ChatterService().get(PlayerUtils.getPlayer(user.getUuid()));
 		}
 		return null;
 	}
@@ -75,7 +75,7 @@ public class DiscordChatEvent extends ChatEvent {
 	public Set<Chatter> getRecipients() {
 		return PlayerUtils.getOnlinePlayers().stream()
 						.filter(player -> player.hasPermission(permission))
-						.map(player -> new ChatService().get(player))
+						.map(player -> new ChatterService().get(player))
 						.collect(Collectors.toSet());
 	}
 

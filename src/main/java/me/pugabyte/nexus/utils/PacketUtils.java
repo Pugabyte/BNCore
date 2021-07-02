@@ -366,7 +366,7 @@ public class PacketUtils {
 
 		DataWatcher dataWatcher = itemFrame.getDataWatcher();
 		dataWatcher.set(DataWatcherRegistry.g.a(7), CraftItemStack.asNMSCopy(content));
-		dataWatcher.set(DataWatcherRegistry.b.a(8), rotation);
+		dataWatcher.set(DataWatcherRegistry.b.a(8), rotation != -1 ? rotation : itemFrame.getRotation());
 
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
 				itemFrame.getId(), itemFrame.getDataWatcher(), true);

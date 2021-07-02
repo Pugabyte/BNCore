@@ -10,7 +10,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -19,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -55,14 +54,12 @@ public abstract class SkullHuntEvent implements Listener {
 	protected String foundAllMsg = "You found all the skulls!";
 
 	// Sounds
-	protected List<SoundUtils.SoundArgs> foundOneSounds = Arrays.asList(
-			new SoundUtils.SoundArgs(Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2f, 2f),
-			new SoundUtils.SoundArgs(Sound.BLOCK_BEACON_POWER_SELECT, 2f, 2f)
+	protected List<SoundBuilder> foundOneSounds = Arrays.asList(
+		new SoundBuilder(Sound.BLOCK_ENCHANTMENT_TABLE_USE).pitch(2.0).volume(2.0),
+		new SoundBuilder(Sound.BLOCK_BEACON_POWER_SELECT).pitch(2.0).volume(2.0)
 	);
-	protected List<SoundUtils.SoundArgs> foundAlreadySounds = Collections.singletonList(
-			new SoundUtils.SoundArgs(Sound.ENTITY_VILLAGER_NO, 2F, 1F));
-	protected List<SoundUtils.SoundArgs> foundAllSounds = Collections.singletonList(
-			new SoundUtils.SoundArgs(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 2F, 1F));
+	protected List<SoundBuilder> foundAlreadySounds = Collections.singletonList(new SoundBuilder(Sound.ENTITY_VILLAGER_NO).pitch(2.0).volume(2.0));
+	protected List<SoundBuilder> foundAllSounds = Collections.singletonList(new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).pitch(2.0));
 
 	// ItemStack Prizes
 	List<ItemBuilder> singlePrizes = null;
@@ -185,9 +182,9 @@ public abstract class SkullHuntEvent implements Listener {
 		playSounds(player, foundAlreadySounds);
 	}
 
-	public void playSounds(Player player, List<SoundUtils.SoundArgs> sounds) {
-		for (SoundUtils.SoundArgs soundArgs : sounds) {
-			Tasks.wait(soundArgs.getDelay(), () -> SoundUtils.playSound(player, soundArgs));
+	public void playSounds(Player player, List<SoundBuilder> sounds) {
+		for (SoundBuilder soundBuilder : sounds) {
+			soundBuilder.clone().receiver(player).play();
 		}
 	}
 

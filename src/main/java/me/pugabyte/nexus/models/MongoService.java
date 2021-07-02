@@ -1,16 +1,12 @@
 package me.pugabyte.nexus.models;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.AggregateIterable;
 import dev.morphia.mapping.MappingException;
 import eden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -103,14 +99,6 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			online.add(get(player));
 		return online;
-	}
-
-	@NotNull
-	protected <U> List<U> map(AggregateIterable<Document> documents, Class<U> clazz) {
-		return new ArrayList<>() {{
-			for (Document purchase : documents)
-				add(database.getMapper().fromDBObject(database, clazz, new BasicDBObject(purchase), null));
-		}};
 	}
 
 }

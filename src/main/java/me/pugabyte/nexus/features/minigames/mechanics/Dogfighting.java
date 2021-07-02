@@ -19,7 +19,7 @@ public class Dogfighting extends Quake {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ELYTRA);
 	}
 

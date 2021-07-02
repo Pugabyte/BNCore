@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
@@ -14,7 +15,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import eden.utils.RegexUtils;
 import lombok.Data;
-import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.CitizensUtils.NPCFinder;
@@ -26,6 +26,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,49 +39,52 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
-public class WorldGuardUtils {
-	@NonNull
+public final class WorldGuardUtils {
+	@NotNull
 	private final org.bukkit.World world;
+	@NotNull
 	private final BukkitWorld bukkitWorld;
+	@NotNull
 	private final World worldEditWorld;
+	@NotNull
 	private final RegionManager manager;
-	public static final WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+	public static final @Nullable WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
-	public WorldGuardUtils(@NonNull org.bukkit.entity.Entity entity) {
+	public WorldGuardUtils(@NotNull org.bukkit.entity.Entity entity) {
 		this(entity.getWorld());
 	}
 
-	public WorldGuardUtils(@NonNull org.bukkit.Location location) {
+	public WorldGuardUtils(@NotNull org.bukkit.Location location) {
 		this(location.getWorld());
 	}
 
-	public WorldGuardUtils(@NonNull org.bukkit.block.Block block) {
+	public WorldGuardUtils(@NotNull org.bukkit.block.Block block) {
 		this(block.getWorld());
 	}
 
-	public WorldGuardUtils(@NonNull String world) {
-		this(Bukkit.getWorld(world));
+	public WorldGuardUtils(@NotNull String world) {
+		this(Preconditions.checkNotNull(Bukkit.getWorld(world), "No world could be found by the name " + world));
 	}
 
-	public WorldGuardUtils(@NonNull org.bukkit.World world) {
+	public WorldGuardUtils(@NotNull org.bukkit.World world) {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
-		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
+		this.manager = Preconditions.checkNotNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld), "Could not load RegionManager");
 	}
 
-	public RegionContainer getContainer() {
+	public @NotNull RegionContainer getContainer() {
 		return WorldGuard.getInstance().getPlatform().getRegionContainer();
 	}
 
-	public ProtectedRegion getProtectedRegion(String name) {
+	public @NotNull ProtectedRegion getProtectedRegion(@NotNull String name) throws InvalidInputException {
 		ProtectedRegion region = manager.getRegion(name.toLowerCase());
 		if (region == null)
 			throw new InvalidInputException("Region &e" + name + " &cnot found");
 		return region;
 	}
 
-	public static org.bukkit.World getWorld(ProtectedRegion protectedRegion) {
+	public static @Nullable org.bukkit.World getWorld(@NotNull ProtectedRegion protectedRegion) {
 		for (org.bukkit.World world : Bukkit.getWorlds()) {
 			try {
 				if (protectedRegion.equals(new WorldGuardUtils(world).getProtectedRegion(protectedRegion.getId())))
@@ -89,160 +94,160 @@ public class WorldGuardUtils {
 		return null;
 	}
 
-	public static Vector3 toVector3(Location location) {
+	public static @NotNull Vector3 toVector3(@NotNull Location location) {
 		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
-	public static Vector3 toVector3(Vector vector) {
+	public static @NotNull Vector3 toVector3(@NotNull Vector vector) {
 		return Vector3.at(vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public static BlockVector3 toBlockVector3(Location location) {
+	public static @NotNull BlockVector3 toBlockVector3(@NotNull Location location) {
 		return BlockVector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
-	public static BlockVector3 toBlockVector3(Vector vector) {
+	public static @NotNull BlockVector3 toBlockVector3(@NotNull Vector vector) {
 		return BlockVector3.at(vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public Location toLocation(Vector3 vector) {
+	public @NotNull Location toLocation(@NotNull Vector3 vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public Location toLocation(BlockVector3 vector) {
+	public @NotNull Location toLocation(@NotNull BlockVector3 vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public Region getRegion(String name) {
+	public @NotNull Region getRegion(@NotNull String name) {
 		return convert(getProtectedRegion(name));
 	}
 
-	public Region getRegion(Location min, Location max) {
+	public @NotNull Region getRegion(@NotNull Location min, @NotNull Location max) {
 		return new CuboidRegion(worldEditWorld, toBlockVector3(min), toBlockVector3(max));
 	}
 
-	public Set<ProtectedRegion> getRegionsAt(Location location) {
+	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Location location) {
 		if (!isSameWorld(location))
 			return new HashSet<>();
 
 		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
 	}
 
-	public Set<ProtectedRegion> getRegionsAt(Vector vector) {
+	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Vector vector) {
 		return getRegionsAt(vector.toLocation(world));
 	}
 
-	public Set<String> getRegionNamesAt(Location location) {
+	public @NotNull Set<String> getRegionNamesAt(@NotNull Location location) {
 		if (!isSameWorld(location))
 			return new HashSet<>();
 
 		return getRegionsAt(location).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
-	public Set<String> getRegionNamesAt(Vector vector) {
+	public @NotNull Set<String> getRegionNamesAt(@NotNull Vector vector) {
 		return getRegionNamesAt(vector.toLocation(world));
 	}
 
-	public boolean isInRegion(HasPlayer player, String region) {
+	public boolean isInRegion(@NotNull HasPlayer player, @NotNull String region) {
 		return isInRegion(player.getPlayer().getLocation(), region);
 	}
 
-	public boolean isInRegion(HasPlayer player, ProtectedRegion region) {
+	public boolean isInRegion(@NotNull HasPlayer player, @NotNull ProtectedRegion region) {
 		return isInRegion(player.getPlayer().getLocation(), region);
 	}
 
-	public boolean isInRegion(Location location, String region) {
+	public boolean isInRegion(@NotNull Location location, @NotNull String region) {
 		return getRegionNamesAt(location).contains(region);
 	}
 
-	public boolean isInRegion(Vector vector, String region) {
+	public boolean isInRegion(@NotNull Vector vector, @NotNull String region) {
 		return getRegionNamesAt(vector).contains(region);
 	}
 
-	public boolean isInRegion(Location location, ProtectedRegion region) {
+	public boolean isInRegion(@NotNull Location location, @NotNull ProtectedRegion region) {
 		return region.contains(toBlockVector3(location));
 	}
 
-	public boolean isInRegion(Vector vector, ProtectedRegion region) {
+	public boolean isInRegion(@NotNull Vector vector, @NotNull ProtectedRegion region) {
 		return region.contains(toBlockVector3(vector));
 	}
 
-	public Collection<Player> getPlayersInRegion(String region) {
+	public @NotNull Collection<Player> getPlayersInRegion(@NotNull String region) {
 		return getPlayersInRegion(getProtectedRegion(region));
 	}
 
-	public Collection<Player> getPlayersInRegion(ProtectedRegion region) {
+	public @NotNull Collection<Player> getPlayersInRegion(@NotNull ProtectedRegion region) {
 		return PlayerUtils.getOnlinePlayers(world).stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
 	}
 
-	public Collection<NPC> getNPCsInRegion(String region) {
+	public @NotNull Collection<NPC> getNPCsInRegion(@NotNull String region) {
 		return getNPCsInRegion(getProtectedRegion(region));
 	}
 
-	public Collection<NPC> getNPCsInRegion(ProtectedRegion region) {
+	public @NotNull Collection<NPC> getNPCsInRegion(@NotNull ProtectedRegion region) {
 		return NPCFinder.builder().world(world).region(region).build().get();
 	}
 
-	public Collection<Entity> getEntitiesInRegion(String region) {
+	public @NotNull Collection<Entity> getEntitiesInRegion(@NotNull String region) {
 		return getEntitiesInRegion(getProtectedRegion(region));
 	}
 
-	public Collection<Entity> getEntitiesInRegion(ProtectedRegion region) {
+	public @NotNull Collection<Entity> getEntitiesInRegion(@NotNull ProtectedRegion region) {
 		return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 	}
 
-	public <T extends Entity> Collection<T> getEntitiesInRegionByClass(String region, Class<T> type) {
+	public @NotNull <T extends Entity> Collection<T> getEntitiesInRegionByClass(@NotNull String region, @NotNull Class<T> type) {
 		return getEntitiesInRegionByClass(getProtectedRegion(region), type);
 	}
 
-	public <T extends Entity> Collection<T> getEntitiesInRegionByClass(ProtectedRegion region, Class<T> type) {
+	public @NotNull <T extends Entity> Collection<T> getEntitiesInRegionByClass(@NotNull ProtectedRegion region, @NotNull Class<T> type) {
 		return world.getEntitiesByClass(type).stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 	}
 
-	public Set<ProtectedRegion> getRegionsLike(String regex) {
+	public @NotNull Set<ProtectedRegion> getRegionsLike(@NotNull String regex) {
 		Map<String, ProtectedRegion> regions = manager.getRegions();
 		Pattern pattern = RegexUtils.ignoreCasePattern(regex);
 		return regions.keySet().stream().filter(id -> pattern.matcher(id).matches()).map(regions::get).collect(Collectors.toSet());
 	}
 
-	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
+	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull Location location) {
 		if (!isSameWorld(location)) return new HashSet<>();
 		Pattern pattern = RegexUtils.ignoreCasePattern(regex);
 		return getRegionsAt(location).stream().filter(region -> pattern.matcher(region.getId()).matches()).collect(Collectors.toSet());
 	}
 
-	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Vector vector) {
+	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull Vector vector) {
 		return getRegionsLikeAt(regex, vector.toLocation(world));
 	}
 
-	public boolean isSameWorld(Location location) {
+	public boolean isSameWorld(@NotNull Location location) {
 		return location.getWorld().equals(world);
 	}
 
-	public ProtectedRegion getRegionLike(String regex) {
+	public @NotNull ProtectedRegion getRegionLike(@NotNull String regex) throws InvalidInputException {
 		Set<ProtectedRegion> matches = getRegionsLike(regex);
 		if (matches.size() == 0)
 			throw new InvalidInputException("No regions found");
 		return matches.iterator().next();
 	}
 
-	public ProtectedRegion convert(Region region) {
+	public @NotNull ProtectedRegion convert(@NotNull Region region) {
 		return convert("temp", region);
 	}
 
-	public ProtectedRegion convert(String id, Region region) {
+	public @NotNull ProtectedRegion convert(@NotNull String id, @NotNull Region region) {
 		return new ProtectedCuboidRegion(id, region.getMaximumPoint(), region.getMinimumPoint());
 	}
 
-	public Region convert(ProtectedRegion region) {
+	public @NotNull Region convert(@NotNull ProtectedRegion region) {
 		return new CuboidRegion(worldEditWorld, region.getMaximumPoint(), region.getMinimumPoint());
 	}
 
-	public Block getRandomBlock(String region) {
+	public @NotNull Block getRandomBlock(@NotNull String region) {
 		return getRandomBlock(getProtectedRegion(region));
 	}
 
-	public Block getRandomBlock(ProtectedRegion region) {
+	public @NotNull Block getRandomBlock(@NotNull ProtectedRegion region) {
 		int xMin = region.getMinimumPoint().getBlockX();
 		int yMin = region.getMinimumPoint().getBlockY();
 		int zMin = region.getMinimumPoint().getBlockZ();
@@ -258,7 +263,7 @@ public class WorldGuardUtils {
 		return world.getBlockAt(x, y, z);
 	}
 
-	public Block getRandomBlock(ProtectedRegion region, Material type) {
+	public @Nullable Block getRandomBlock(@NotNull ProtectedRegion region, @NotNull Material type) {
 		int ATTEMPTS = 5;
 		for (int i = 0; i < ATTEMPTS; i++) {
 			Block block = getRandomBlock(region);
@@ -268,7 +273,7 @@ public class WorldGuardUtils {
 		return null;
 	}
 
-	public List<Block> getRandomBlocks(ProtectedRegion region, Material type, int count) {
+	public @NotNull List<Block> getRandomBlocks(@NotNull ProtectedRegion region, @NotNull Material type, int count) {
 		List<Block> blocks = new ArrayList<>();
 		int SAFETY = 0;
 		while (blocks.size() < count && ++SAFETY < (count * 2)) {

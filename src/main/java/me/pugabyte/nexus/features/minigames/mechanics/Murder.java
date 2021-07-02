@@ -79,12 +79,12 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.IRON_SWORD);
 	}
 
 	@Override
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return item.getType() == Material.IRON_INGOT;
 	}
 
@@ -104,7 +104,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		List<Minigamer> list = event.getMatch().getAliveMinigamers();
@@ -144,7 +144,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer victim = event.getMinigamer();
 		Minigamer attacker = event.getAttacker();
 		spawnCorpse(victim);
@@ -163,7 +163,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		MurderMatchData matchData = match.getMatchData();
 		Minigamer murderer = getMurderer(match);
 		Minigamer hero = matchData.getHero();
@@ -185,7 +185,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		super.onDamage(event);
 
 		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent originalEvent) {
@@ -202,7 +202,7 @@ public class Murder extends TeamMechanic {
 		}
 	}
 
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		return new HashMap<>() {{
 			match.getMinigamers().stream().filter(Minigamer::isAlive)
 					.forEach(minigamer -> put(minigamer.getNickname(), 0));

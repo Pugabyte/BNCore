@@ -109,6 +109,14 @@ public class Tasks {
 		taskIds.forEach(Tasks::cancel);
 	}
 
+	public static boolean isRunning(int id) {
+		return scheduler.isCurrentlyRunning(id);
+	}
+
+	public static boolean isQueued(int id) {
+		return scheduler.isQueued(id);
+	}
+
 	public static class Countdown {
 		private final int duration;
 		private final boolean doZero;

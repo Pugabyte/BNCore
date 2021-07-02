@@ -14,7 +14,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission("group.staff")
+@Permission("group.admin")
 public class BearFair21FishingCommand extends CustomCommand {
 	public BearFair21FishingCommand(CommandEvent event) {
 		super(event);
@@ -50,6 +50,12 @@ public class BearFair21FishingCommand extends CustomCommand {
 		send("==============");
 		send("Total: " + fullCatch.size());
 
+	}
+
+	@Path("getLoot")
+	void getLoot() {
+		for (FishingLoot loot : FishingLoot.values())
+			giveItem(loot.getItem());
 	}
 
 	@Getter

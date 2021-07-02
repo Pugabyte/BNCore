@@ -11,7 +11,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
-import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
@@ -82,13 +81,6 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	@Path("view <player> <timestamp>")
 	void view(InventoryHistory history, LocalDateTime timestamp) {
 		new InventorySnapshotMenu(history.getSnapshot(timestamp)).open(player());
-	}
-
-	@Async
-	@Confirm
-	@Path("database delete [player]")
-	void databaseDelete(@Arg("self") InventoryHistory history) {
-		service.delete(history);
 	}
 
 	@Path("takeSnapshot [player]")

@@ -23,7 +23,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TitleUtils;
@@ -35,7 +35,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -47,7 +46,7 @@ import java.util.UUID;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
-public class PugmasIsland implements Listener, BearFair21Island {
+public class PugmasIsland implements BearFair21Island {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
 	private static final ClientsideContent contentList = contentService.get0();
 	private static final BearFair21UserService userService = new BearFair21UserService();
@@ -227,6 +226,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 						script.add("<self> Leave it to me!");
 
 						user.setQuestStage_Pugmas(QuestStage.STARTED);
+						user.getNextStepNPCs().add(GRINCH.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -263,37 +263,41 @@ public class PugmasIsland implements Listener, BearFair21Island {
 						script.add("wait 100");
 						wait += (100 + 100 + 100 + 60 + 100 + 100);
 						script.add("<self> How dare you try and steal from these kind citizens! What have they ever done to you?! " +
-								"You'll never get away with this...");
+							"You'll never get away with this...");
 						script.add("wait 140");
 						script.add("Oh boo hoo! You're already too late! I have devised an ingenious plan that is completely fool-proof " +
-								"and has no flaws what-so-ever!");
+							"and has no flaws what-so-ever!");
 						script.add("wait 140");
 						script.add("My make-shift Present Pincher 4000 will NEVER let me down! MUAHAHAHA!");
 						script.add("wait 100");
 						wait += (140 + 140 + 100);
 
 						// Rocket rumbling sound
-						Tasks.wait(wait, () -> SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_MINECART_RIDING, 1F, 0.1F));
+						;
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_MINECART_RIDING).receiver(user.getPlayer()).pitch(0.1).play());
 						script.add("<self> No please! Don't do it!");
 						script.add("wait 70");
 						wait += (70);
 
 						// Rocket launching sound
-						Tasks.wait(wait, () -> SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1F, 0.2F));
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH).receiver(user.getPlayer()).pitch(0.1).play());
 						script.add("MUAHAHAHA-");
 						script.add("wait 60");
 						wait += (60);
 
 						// Rocket exploding
 						Tasks.wait(wait, () -> {
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 2F, 0.1F);
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_GENERIC_EXPLODE, 2F, 0.1F);
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 2F, 1F);
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
+
+							new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
+
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).receiver(user.getPlayer()).volume(2.0).play();
 							Tasks.wait(8, () -> {
-								SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 2F, 0.1F);
-								SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.1F);
-								Tasks.wait(8, () ->
-										SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 1F, 0.1F));
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).receiver(user.getPlayer()).pitch(0.1).play();
+								Tasks.wait(8, () -> {
+									new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR).receiver(user.getPlayer()).pitch(0.1).play();
+								});
 							});
 						});
 						script.add("wait 20");
@@ -325,10 +329,13 @@ public class PugmasIsland implements Listener, BearFair21Island {
 						wait += (80 + 80 + 100 + 60 + 60 + 80 + 80 + 100 + 60 + 40);
 
 						user.setQuestStage_Pugmas(QuestStage.STEP_ONE);
+						user.getNextStepNPCs().remove(MAYOR.getNpcId());
+						user.getNextStepNPCs().add(this.getNpcId());
 						userService.save(user);
 
 						Tasks.wait(wait, () -> {
 							user.setQuestStage_Pugmas(QuestStage.STEP_TWO);
+							user.getNextStepNPCs().remove(this.getNpcId());
 							userService.save(user);
 						});
 
@@ -379,7 +386,10 @@ public class PugmasIsland implements Listener, BearFair21Island {
 						script.add("wait 80");
 						wait += (80 + 80 + 80 + 80);
 
-						Tasks.wait(wait, () -> Quests.giveKey(user));
+						Tasks.wait(wait, () -> {
+							Quests.giveKey(user);
+							BearFair21.giveTokens(user, 200);
+						});
 
 						user.setQuestStage_Pugmas(QuestStage.COMPLETE);
 						userService.save(user);
@@ -387,7 +397,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 					}
 				}
 
-				script.add("What do YOU want");
+				script.add("What do YOU want?");
 				return script;
 			}
 		},
@@ -403,7 +413,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override
@@ -413,7 +423,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 		PugmasNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 	}
 
@@ -439,9 +449,13 @@ public class PugmasIsland implements Listener, BearFair21Island {
 		}
 
 		Countdown countdown = Countdown.builder()
-				.duration(Time.MINUTE.x(4))
-				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(),
-						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)"))
+			.duration(Time.MINUTE.x(4))
+			.onSecond(i -> {
+				if (user.isOnline()) {
+					ActionBarUtils.sendActionBar(user.getPlayer(),
+						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)");
+				}
+			})
 				.onComplete(() -> endChallenge(user, false))
 				.start();
 
@@ -508,10 +522,9 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onClickPresent(PlayerInteractEvent event) {
-		if (BearFair21.isNotAtBearFair(event))
-			return;
-
+		if (BearFair21.isNotAtBearFair(event)) return;
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;

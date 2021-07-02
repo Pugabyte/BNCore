@@ -30,13 +30,13 @@ public class TNTRun extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.TNT);
 	}
 
 	@Override
-	public void begin(MatchBeginEvent event) {
-		super.begin(event);
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
 		event.getMatch().broadcast("&eGo!");
 		new TNTRunTask(event.getMatch());
 	}

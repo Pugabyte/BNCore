@@ -33,6 +33,7 @@ public class MiniGolfCommand extends CustomCommand {
 			error("You are already playing");
 
 		user.setPlaying(true);
+//		user.setExperience(player().getExp());
 		user.getScore().clear();
 		service.save(user);
 
@@ -49,6 +50,7 @@ public class MiniGolfCommand extends CustomCommand {
 			error("You are not playing");
 
 		user.setPlaying(false);
+		player().sendExperienceChange(player().getExp(), player().getLevel());
 		service.save(user);
 
 		if (user.getSnowball() != null) {

@@ -114,10 +114,10 @@ public class AutoSort extends Feature {
 			eligibleSignatures.add(signature);
 		}
 
-		int sourceStartIndex = depositHotbar ? 0 : 9;
-		int sourceSize = Math.min(source.getSize(), 36);
+		int sourceInventoryStartIndex = depositHotbar ? 0 : 9;
+		int sourceInventorySize = Math.min(source.getSize(), 36);
 
-		for (int i = sourceStartIndex; i < sourceSize; i++) {
+		for (int i = sourceInventoryStartIndex; i < sourceInventorySize; i++) {
 			ItemStack sourceStack = source.getItem(i);
 			if (ItemUtils.isNullOrAir(sourceStack))
 				continue;

@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -107,7 +107,7 @@ public class RavensNestEstate implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MatchQuitEvent event) {
+	public void onMatchQuit(MinigamerQuitEvent event) {
 		if (!isPlayingThis(event.getMinigamer())) return;
 		stopSounds(event.getMinigamer());
 	}

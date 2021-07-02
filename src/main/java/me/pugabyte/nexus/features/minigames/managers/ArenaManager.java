@@ -66,8 +66,15 @@ public class ArenaManager {
 
 	public static Arena getFromRegion(String regionName) {
 		try {
-			String mechanicName = regionName.split("_")[0];
-			String arenaName = regionName.split("_")[1];
+			String mechanicName, arenaName;
+			if (!regionName.contains("_")) {
+				mechanicName = regionName;
+				arenaName = regionName;
+			} else {
+				mechanicName = regionName.split("_")[0];
+				arenaName = regionName.split("_")[1];
+			}
+
 			Arena arena = get(arenaName);
 			if (arena.getMechanic().getClass().getSimpleName().equalsIgnoreCase(mechanicName))
 				return arena;

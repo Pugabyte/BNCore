@@ -19,8 +19,8 @@ import me.pugabyte.nexus.features.minigames.models.arenas.ThimbleMap;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.ThimbleMatchData;
@@ -92,7 +92,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.CHAINMAIL_HELMET);
 	}
 
@@ -107,7 +107,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		ThimbleArena arena = match.getArena();
 		arena.setGamemode(arena.getNextGamemode());
@@ -116,7 +116,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
@@ -126,13 +126,14 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void tellMapAndMechanic(Minigamer minigamer) {
+	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
 		ThimbleArena arena = minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
+		tellDescriptionAndModifier(minigamer);
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 		matchData.getTurnMinigamerList().remove(minigamer);
@@ -143,7 +144,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getScoreboardTitle(Match match) {
+	public @NotNull String getScoreboardTitle(@NotNull Match match) {
 		ThimbleArena arena = match.getArena();
 		String scoreboardTitle = super.getScoreboardTitle(match);
 		if (arena.getGamemode() != null)
@@ -152,7 +153,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 		ThimbleMatchData matchData = match.getMatchData();
 
@@ -184,7 +185,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		Match match = event.getMatch();
@@ -207,14 +208,14 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		ThimbleArena arena = event.getMatch().getArena();
 		event.getMatch().getWEUtils().set(arena.getRegion("pool"), BlockTypes.WATER);
 		super.onEnd(event);
 	}
 
 	@Override
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		super.onDamage(event);
 		event.setCancelled(true);
 		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
@@ -223,7 +224,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		super.onDeath(event);
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
@@ -269,7 +270,7 @@ public final class Thimble extends TeamlessMechanic {
 		match.getTasks().wait(30, () -> nextTurn(match));
 	}
 
-	public void nextTurn(Match match) {
+	public void nextTurn(@NotNull Match match) {
 		ThimbleArena arena = match.getArena();
 		ThimbleMatchData matchData = match.getMatchData();
 

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.API;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -18,12 +19,13 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
@@ -32,7 +34,6 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -145,10 +146,11 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	private void save() {
-		FileUtils.write(getFile(), StringUtils.getPrettyPrinter().toJson(config));
+		FileUtils.write(getFile(), API.get().getPrettyPrinter().create().toJson(config));
 	}
 
 	@Path("reload")
+	@Permission("group.admin")
 	void reload() {
 		reloadConfig();
 		int total = config.getMessages().values().stream().map(CustomDeathMessage::count).reduce(0, Integer::sum);
@@ -286,7 +288,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	private void local(Player player, JsonBuilder output) {
-		Chatter chatter = new ChatService().get(player);
+		Chatter chatter = new ChatterService().get(player);
 		for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 			if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
 				recipient.sendMessage(player, output, MessageType.CHAT);

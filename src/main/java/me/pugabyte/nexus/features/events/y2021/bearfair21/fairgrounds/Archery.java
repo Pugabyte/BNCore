@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -72,15 +73,17 @@ public class Archery implements Listener {
 		}
 	}
 
-	// TODO BF21: Remove kit on exit kit region
 	@EventHandler
 	public void onRegionExit(PlayerLeftRegionEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(gameRegion)) return;
-		if (!enabled) return;
-		int size = getWGUtils().getPlayersInRegion(gameRegion).size();
-		if (size == 0) {
-			enabled = false;
-			clearTargets();
+		String id = event.getRegion().getId();
+		if (id.equalsIgnoreCase(gameRegion)) {
+			if (!enabled) return;
+			if (getWGUtils().getPlayersInRegion(gameRegion).size() == 0) {
+				enabled = false;
+				clearTargets();
+			}
+		} else if (id.equalsIgnoreCase(kitRegion)) {
+			BearFair21Kit.ARCHERY.removeItems(event.getPlayer());
 		}
 	}
 
@@ -97,9 +100,9 @@ public class Archery implements Listener {
 		projectile.remove();
 		--activeTargets;
 		removeTarget(hitBlock);
-		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
+		new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).receiver(player).volume(0.3).pitch(0.1).play();
 
-		BearFair21.giveDailyPoints(player, BF21PointSource.ARCHERY, 1);
+		BearFair21.giveDailyTokens(player, BF21PointSource.ARCHERY, 1);
 	}
 
 	private List<Location> getTargetLocs() {

@@ -29,7 +29,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.BLUE_BANNER);
 	}
 
@@ -78,7 +78,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		OneFlagCaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
 		if (minigamer.equals(matchData.getFlagCarrier())) {
@@ -130,7 +130,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 
 		OneFlagCaptureTheFlagMatchData matchData = event.getMatch().getMatchData();

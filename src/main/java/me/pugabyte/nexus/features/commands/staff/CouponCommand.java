@@ -248,6 +248,14 @@ public class CouponCommand extends CustomCommand implements Listener {
 	@Path("get (eco|vps|mcmmo|event_tokens) <amount>")
 	void generic(Integer amount) {
 		String type = arg(2);
+		ItemStack coupon = getGenericCoupon(type, amount);
+		inventory().addItem(coupon);
+	}
+
+	public static ItemStack getGenericCoupon(String type, Integer amount) {
+		CouponService service = new CouponService();
+		Coupons coupons = service.get0();
+
 		Coupon coupon = coupons.of(type);
 		ItemStack itemStack = coupon.getItem().clone();
 		ItemMeta meta = itemStack.getItemMeta();
@@ -255,7 +263,8 @@ public class CouponCommand extends CustomCommand implements Listener {
 		lore.set(0, StringUtils.colorize("&3Amount: &e" + amount));
 		meta.setLore(lore);
 		itemStack.setItemMeta(meta);
-		inventory().addItem(itemStack);
+
+		return itemStack;
 	}
 
 	@ConverterFor(Coupon.class)

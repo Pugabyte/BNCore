@@ -257,7 +257,7 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@Contract("_ -> new")
 	public static JsonBuilder fromPrefix(@NotNull String prefix) {
-		return fromPrefix(prefix, null);
+		return fromPrefix(prefix, (ComponentLike) null);
 	}
 
 	/**
@@ -269,6 +269,19 @@ public class JsonBuilder implements ComponentLike {
 	@Contract("_, _ -> new")
 	public static JsonBuilder fromPrefix(@NotNull String prefix, @Nullable ComponentLike contents) {
 		return new JsonBuilder(prefix, contents);
+	}
+
+	/**
+	 * Creates a new builder with a prefix. Converts the input text to a component and appends it to the internal builder
+	 * <p>
+	 * Note: this does not apply any text, color, or formatting changes to the builder itself
+	 * @param prefix prefix text
+	 * @param contents contents to append to the prefix
+	 * @return a new builder
+	 */
+	@Contract("_, _ -> new")
+	public static JsonBuilder fromPrefix(@NotNull String prefix, @Nullable String contents) {
+		return new JsonBuilder(prefix, new JsonBuilder(contents));
 	}
 
 	/**

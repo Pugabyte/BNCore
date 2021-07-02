@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 
 import java.util.HashSet;
@@ -23,7 +23,7 @@ public class CensorCommand extends CustomCommand {
 
 	@Path("process <channel> <message...>")
 	void process(PublicChannel channel, String message) {
-		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), channel, message, message, new HashSet<>());
+		ChatEvent event = new PublicChatEvent(new ChatterService().get(player()), channel, message, message, new HashSet<>());
 		Censor.process(event);
 		send(PREFIX + "Processed message:" + (event.isCancelled() ? " &c(Cancelled)" : ""));
 		send("&eOriginal: &f" + event.getOriginalMessage());

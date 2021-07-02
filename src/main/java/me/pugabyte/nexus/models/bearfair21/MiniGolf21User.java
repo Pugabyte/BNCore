@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
@@ -19,6 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Snowball;
+import org.bukkit.inventory.ItemStack;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	private boolean debug = false;
 	//
 	private Set<MiniGolfHole> holeInOne = new HashSet<>();
+	private Set<MiniGolfHole> completed = new HashSet<>();
 	private Map<MiniGolfHole, Integer> score = new HashMap<>();
 	private MiniGolfHole currentHole = null;
 	private int currentStrokes = 0;
@@ -101,4 +104,9 @@ public class MiniGolf21User implements PlayerOwnedObject {
 		if (this.isDebug())
 			sendMessage(debug);
 	}
+
+	public ItemStack getGolfBall() {
+		return MiniGolf.getGolfBall().customModelData(miniGolfColor.getCustomModelData()).build();
+	}
+
 }

@@ -24,7 +24,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
@@ -52,19 +52,22 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
+	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
 	//
 	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
 	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
@@ -96,6 +99,7 @@ public class MiniGolf {
 		for (MiniGolf21User user : service.getUsers()) {
 			Snowball snowball = user.getSnowball();
 			if (snowball != null) {
+				user.debug("shutdown, removing golfball");
 				user.removeBall();
 				MiniGolfUtils.giveBall(user);
 			}
@@ -103,10 +107,7 @@ public class MiniGolf {
 	}
 
 	public static void giveKit(MiniGolf21User user) {
-		List<ItemStack> kit = Arrays.asList(getPutter(), getWedge(), getWhistle(),
-				getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build(), getScoreBook());
-
-		PlayerUtils.giveItems(user.getOnlinePlayer(), kit);
+		PlayerUtils.giveItems(user.getOnlinePlayer(), List.of(getPutter(), getWedge(), getWhistle(), user.getGolfBall(), getScoreBook()));
 	}
 
 	public static void takeKit(MiniGolf21User user) {
@@ -114,7 +115,7 @@ public class MiniGolf {
 		inventory.remove(getPutter());
 		inventory.remove(getWedge());
 		inventory.remove(getWhistle());
-		inventory.remove(getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+		inventory.remove(user.getGolfBall());
 		inventory.remove(getScoreBook());
 	}
 
@@ -197,6 +198,9 @@ public class MiniGolf {
 		});
 	}
 
+	@Getter
+	private static final Map<UUID, Float> powerMap = new HashMap<>();
+
 	private void playerTasks() {
 		// Kit
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
@@ -237,16 +241,16 @@ public class MiniGolf {
 					continue;
 				//
 
-				if (player.getLevel() != 0)
-					player.setLevel(0);
+				float amount = player.getPing() < 200 ? 0.04F : 0.02F;
 
-				double amount = player.spigot().getPing() < 200 ? 0.04 : 0.02;
-				double exp = player.getExp() + amount;
+				float exp = powerMap.getOrDefault(user.getUuid(), .0F);
+				exp += amount;
 				if (exp > 1.00) {
-					exp = 0.00;
+					exp = 0.0F;
 				}
+				powerMap.put(user.getUuid(), exp);
 
-				player.setExp((float) exp);
+				player.sendExperienceChange(exp, 0);
 			}
 		});
 	}
@@ -276,6 +280,7 @@ public class MiniGolf {
 					continue;
 
 				if (!ball.isValid()) {
+					user.debug("golfball is not valid, removing");
 					user.removeBall();
 					continue;
 				}
@@ -341,29 +346,33 @@ public class MiniGolf {
 						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
 						// Remove ball
+						user.debug("golfball has hit cauldron, removing");
 						user.removeBall();
 
 						// Spawn firework
 						Tasks.wait(Time.TICK, () -> new FireworkLauncher(loc)
-								.power(0)
-								.detonateAfter(Time.TICK.x(2))
-								.type(Type.BURST)
-								.colors(user.getFireworkColor())
-								.fadeColors(Collections.singletonList(Color.WHITE))
-								.launch());
+							.power(0)
+							.detonateAfter(Time.TICK.x(2))
+							.type(Type.BURST)
+							.colors(user.getFireworkColor())
+							.fadeColors(Collections.singletonList(Color.WHITE))
+							.launch());
 
 						// Send message
 						int wait = Time.SECOND.x(2);
-						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
+						if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
-						BearFair21.giveDailyPoints(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
+						BearFair21.giveDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
 						int strokes = user.getCurrentStrokes();
 						String userScore = MiniGolfUtils.getScore(user);
 						Tasks.wait(wait, () ->
-								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
+							MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
 
 						MiniGolfUtils.giveBall(user);
+
+						user.getCompleted().add(ballHole);
+						MiniGolfUtils.checkCompleted(user);
 
 						if (strokes == 1 && !user.isRainbow()) {
 							user.getHoleInOne().add(ballHole);
@@ -485,7 +494,7 @@ public class MiniGolf {
 								Vector newVel = getDirection(facing.getOppositeFace(), power);
 
 								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
-								SoundUtils.playSound(ball.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 3, 1);
+								new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(ball.getLocation()).volume(3.0).play();
 								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
 							} catch (Exception ignored) {
 

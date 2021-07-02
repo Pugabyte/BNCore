@@ -21,10 +21,12 @@ public class MinigamerDisplayTimerEvent extends MinigamerEvent implements Cancel
 	 * Message that will be displayed on the action bar
 	 */
 	private @NotNull Component contents;
+	private final int seconds;
 
-	public MinigamerDisplayTimerEvent(@NotNull Minigamer minigamer, @NotNull Component contents) {
+	public MinigamerDisplayTimerEvent(@NotNull Minigamer minigamer, @NotNull Component contents, int seconds) {
 		super(minigamer);
 		this.contents = contents;
+		this.seconds = seconds;
 	}
 
 	/**

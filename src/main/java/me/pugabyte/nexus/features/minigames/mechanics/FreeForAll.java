@@ -19,12 +19,12 @@ public final class FreeForAll extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.IRON_SWORD);
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (event.getAttacker() != null)
 			event.getAttacker().scored();
 		super.onDeath(event);

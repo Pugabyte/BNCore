@@ -3,12 +3,14 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
+import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +46,7 @@ public class MiniGolfUtils {
 		return user.getCurrentHole().equals(getHole(location));
 	}
 
-	static void checkHoleInOnes(MiniGolf21User user) {
+	public static void checkHoleInOnes(MiniGolf21User user) {
 		Set<MiniGolfHole> userHoles = user.getHoleInOne();
 		for (MiniGolfHole hole : MiniGolfHole.getHoles()) {
 			if (!userHoles.contains(hole))
@@ -55,6 +57,13 @@ public class MiniGolfUtils {
 		user.setRainbow(true);
 		MiniGolf.getService().save(user);
 	}
+
+	public static void checkCompleted(MiniGolf21User user) {
+		Set<MiniGolfHole> userCompleted = user.getCompleted();
+		if (userCompleted.size() == MiniGolfHole.getHoles().size())
+			Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGOLF);
+	}
+
 
 	public static MiniGolfHole getHole(Location location) {
 		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
@@ -93,7 +102,7 @@ public class MiniGolfUtils {
 		ball.setTicksLived(1);
 
 		sendActionBar(user, "&cOut of bounds!");
-		SoundUtils.playSound(user.getOnlinePlayer(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, SoundUtils.getPitch(0));
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).receiver(user.getOnlinePlayer()).pitchStep(0).play();
 	}
 
 	public static MiniGolf21User getUser(Snowball ball) {
@@ -102,6 +111,7 @@ public class MiniGolfUtils {
 				continue;
 
 			if (!user.isOnline()) {
+				user.debug("user is not online, removing golfball");
 				user.removeBall();
 				continue;
 			}

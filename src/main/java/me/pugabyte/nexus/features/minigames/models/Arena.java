@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -31,6 +30,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,25 +50,25 @@ import static me.pugabyte.nexus.utils.SerializationUtils.YML.serializeMaterialSe
 @SerializableAs("Arena")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Arena implements ConfigurationSerializable, Named, ComponentLike {
-	@NonNull
 	@EqualsAndHashCode.Include
 	private int id = ArenaManager.getNextId();
-	@NonNull
+	@NotNull
 	@EqualsAndHashCode.Include
 	private String name;
-	@NonNull
+	@NotNull
 	private String displayName;
-	@NonNull
 	private boolean testMode = false;
-	@NonNull
+	@NotNull
 	private MechanicType mechanicType = MechanicType.FREE_FOR_ALL;
-	@NonNull
+	@NotNull
 	private List<Team> teams = new ArrayList<>() {{
 		add(new Team());
 	}};
-	@NonNull
+	@NotNull
 	private Lobby lobby = new Lobby();
+	@Nullable
 	private Location spectateLocation;
+	@Nullable
 	private Location respawnLocation;
 	private int respawnSeconds = 5;
 	private int seconds = 300;
@@ -81,23 +81,24 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	private int minWinningScore;
 	private int maxWinningScore;
 	private int lives = 0;
+	@NotNull
 	private Set<Material> blockList = new HashSet<>();
 	@Accessors(fluent = true)
 	private boolean isWhitelist = true;
 	@Accessors(fluent = true)
 	private boolean canJoinLate = false;
 
-	public <T extends Mechanic> T getMechanic() {
+	public @NotNull <T extends Mechanic> T getMechanic() {
 		return (T) getMechanicType().get();
 	}
 
-	public Arena(@NonNull String name) {
+	public Arena(@NotNull String name) {
 		this(new HashMap<>() {{
 			put("name", name);
 		}});
 	}
 
-	public Arena(Map<String, Object> map) {
+	public Arena(@NotNull Map<String, Object> map) {
 		this.id = (int) map.getOrDefault("id", id);
 		this.name = (String) map.get("name");
 		this.displayName = (String) map.getOrDefault("displayName", name);
@@ -123,7 +124,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public @NotNull Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
 			put("id", getId());
 			put("name", getName());
@@ -155,18 +156,23 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 				.hoverEvent(HoverEvent.showText(Component.text(getMechanic().getName(), NamedTextColor.DARK_AQUA)));
 	}
 
-	public World getWorld() {
+	/**
+	 * Gets the world of the arena
+	 * @return arena's world
+	 * @throws InvalidInputException arena location not found
+	 */
+	public @NotNull final World getWorld() throws InvalidInputException {
 		Location location = getTeleportLocation();
 		if (location == null)
 			throw new InvalidInputException("No location found for arena, could not initialize match");
 		return location.getWorld();
 	}
 
-	public WorldGuardUtils getWGUtils() {
+	public @NotNull final WorldGuardUtils getWGUtils() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public WorldEditUtils getWEUtils() {
+	public @NotNull final WorldEditUtils getWEUtils() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -179,45 +185,45 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		}
 	}
 
-	public void regenerate(String type) {
-		String name = getMechanicName();
+	private void regenerate(@NotNull String type) {
 		String regex = getRegionTypeRegex(type);
 
 		getWGUtils().getRegionsLike(regex).forEach(region -> {
-			String file = getSchematicName(region.getId().replaceFirst((name + "_" + getName() + "_").toLowerCase(), ""));
+			String file = getSchematicName(region.getId().replaceFirst(getRegionBaseName().toLowerCase() + "_", ""));
 			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
-	public String getSchematicName(String name) {
+	public @NotNull String getSchematicName(@NotNull String name) {
 		return (getSchematicBaseName() + name).toLowerCase();
 	}
 
-	private String getMechanicName() {
+	@NotNull
+	protected String getMechanicName() {
 		return getMechanic().getClass().getSimpleName().toLowerCase();
 	}
 
-	public String getSchematicBaseName() {
+	public @NotNull String getSchematicBaseName() {
 		return ("minigames/" + getMechanicName() + "/" + getName()).toLowerCase() + "_";
 	}
 
-	public String getRegionBaseName() {
+	public @NotNull String getRegionBaseName() {
 		return (getMechanicName() + "_" + getName()).toLowerCase();
 	}
 
-	private static final String NUMBER_MODIFIER = "(_[0-9]+)?";
+	private static final @NotNull String NUMBER_MODIFIER = "(_[0-9]+)?";
 
-	public String getRegionTypeRegex(String type) {
+	public @NotNull String getRegionTypeRegex(String type) {
 		if (Strings.isNullOrEmpty(type))
 			return "^" + getRegionBaseName() + "$";
 		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + NUMBER_MODIFIER + "$";
 	}
 
-	public boolean ownsRegion(ProtectedRegion region, String type) {
+	public boolean ownsRegion(@NotNull ProtectedRegion region, @NotNull String type) {
 		return ownsRegion(region.getId(), type);
 	}
 
-	public boolean ownsRegion(String regionName, String type) {
+	public boolean ownsRegion(@NotNull String regionName, @NotNull String type) {
 		return regionName.toLowerCase().matches(getRegionTypeRegex(type));
 	}
 
@@ -225,41 +231,41 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return getWGUtils().getRegion(getRegionBaseName());
 	}
 
-	public Region getRegion(String type) {
+	public Region getRegion(@NotNull String type) {
 		return getWGUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
-	public static int getRegionNumber(ProtectedRegion region) {
+	public static int getRegionNumber(@NotNull ProtectedRegion region) {
 		String[] split = region.getId().split("_");
 		return Integer.parseInt(split[split.length - 1]);
 	}
 
-	public Set<ProtectedRegion> getRegionsLike(String regex) {
+	public @NotNull Set<ProtectedRegion> getRegionsLike(@NotNull String regex) {
 		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
 	}
 
-	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
+	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull Location location) {
 		return getWGUtils().getRegionsLikeAt(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER, location);
 	}
 
-	public ProtectedRegion getProtectedRegion() {
+	public @NotNull ProtectedRegion getProtectedRegion() {
 		return getWGUtils().getProtectedRegion(getRegionBaseName());
 	}
 
-	public ProtectedRegion getProtectedRegion(String type) {
+	public @NotNull ProtectedRegion getProtectedRegion(@NotNull String type) {
 		return getWGUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
-	public boolean isInRegion(Block block, String type) {
+	public boolean isInRegion(@NotNull Block block, @NotNull String type) {
 		return isInRegion(block.getLocation(), type);
 	}
 
-	public boolean isInRegion(Location location, String type) {
+	public boolean isInRegion(@NotNull Location location, @NotNull String type) {
 		return !getRegionsLikeAt(type, location).isEmpty();
 	}
 
-	public boolean canUseBlock(Material type) {
-		if (blockList == null || blockList.size() == 0)
+	public boolean canUseBlock(@NotNull Material type) {
+		if (blockList.size() == 0)
 			return true;
 
 		if (isWhitelist)
@@ -276,19 +282,19 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		ArenaManager.delete(this);
 	}
 
-	public Location getTeleportLocation() {
+	public @Nullable Location getTeleportLocation() {
 		if (respawnLocation != null)
 			return respawnLocation;
 		else if (spectateLocation != null)
 			return spectateLocation;
-		else if (lobby != null && lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getLobby()))
+		else if (lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getLobby()))
 			return lobby.getLocation();
-		else if (teams != null && teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
+		else if (teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
 			return teams.get(0).getSpawnpoints().get(0);
 		return null;
 	}
 
-	public void teleport(Minigamer minigamer) {
+	public void teleport(@NotNull Minigamer minigamer) {
 		Location location = getTeleportLocation();
 		if (location == null)
 			minigamer.tell("No teleport location found");
@@ -296,7 +302,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 			minigamer.teleport(location);
 	}
 
-	public int getCalculatedWinningScore(Match match) {
+	public int getCalculatedWinningScore(@NotNull Match match) {
 		if (minWinningScore == 0 || maxWinningScore == 0)
 			return winningScore;
 

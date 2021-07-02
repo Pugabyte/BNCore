@@ -16,16 +16,15 @@ import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
-import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.annotations.TeamGlowing;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
@@ -146,8 +145,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		List<Class<?>> usesWorldEdit = List.of(UncivilEngineers.class);
-		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
+		if (arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
 		}
@@ -188,13 +186,13 @@ public class Match implements ForwardingAudience {
 	void quit(Minigamer minigamer) {
 		if (!minigamers.contains(minigamer)) return;
 
-		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
+		MinigamerQuitEvent event = new MinigamerQuitEvent(minigamer);
 		event.callEvent();
+		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
-		minigamer.clearState();
+		minigamer.clearState(true);
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
@@ -243,7 +241,7 @@ public class Match implements ForwardingAudience {
 		if (tasks != null)
 			tasks.end();
 		broadcast("Match has ended");
-		//logScores();
+		logScores();
 		broadcastNoPrefix("");
 		clearHolograms();
 		clearEntities();
@@ -278,7 +276,7 @@ public class Match implements ForwardingAudience {
 
 		if (scores.length() > 0) {
 			String header = "Scores for " + getArena().getName() + " (" + arena.getMechanic().getName() + "):" + System.lineSeparator();
-			Discord.staffLog("```" + header + scores.toString() + "```");
+			Discord.staffLog("```" + header + scores + "```");
 		}
 	}
 
@@ -335,7 +333,8 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void handleGlow(Team team) {
-		if (team != null && getMechanic().getAnnotation(TeamGlowing.class) != null && !glowUpdates.containsKey(team)) {
+		if (false && team != null && getMechanic().getAnnotation(TeamGlowing.class) != null && !glowUpdates.containsKey(team)) {
+			// TODO: send potion effect packets instead of using GlowAPI (it creates its own scoreboard for colors which messes with things
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
@@ -507,7 +506,7 @@ public class Match implements ForwardingAudience {
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()));
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()), time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});

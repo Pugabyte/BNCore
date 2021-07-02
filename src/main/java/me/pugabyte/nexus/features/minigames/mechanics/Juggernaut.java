@@ -33,7 +33,7 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.NETHERITE_HELMET); // kinda looks like halo's icon idk
 	}
 
@@ -53,7 +53,7 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer victim = event.getMinigamer();
 		Minigamer attacker = event.getAttacker();
 		JuggernautMatchData matchData = event.getMatch().getMatchData();
@@ -105,14 +105,14 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		if (event.getAttacker() != null && event.getMinigamer().getTeam().getName().equals(TEAM_NAME))
 			((JuggernautMatchData) event.getMatch().getMatchData()).setLastAttacker(event.getAttacker());
 		super.onDamage(event);
 	}
 
 	@Override
-	public boolean shouldBeOver(Match match) {
+	public boolean shouldBeOver(@NotNull Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		if (minigamers.size() == 1) {
 			Nexus.log("Match has only one team left, ending");
@@ -137,7 +137,7 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		announceTeamlessWinners(match);
 	}
 }

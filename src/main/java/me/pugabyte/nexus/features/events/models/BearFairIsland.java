@@ -17,6 +17,10 @@ public interface BearFairIsland {
 		return getEventRegion() + "_" + getClass().getAnnotation(Region.class).value();
 	}
 
+	default String getRegion(String subregion) {
+		return getRegion() + "_" + subregion;
+	}
+
 	@SneakyThrows
 	default TalkingNPC getNPC(int id) {
 		Class<? extends Enum<? extends TalkingNPC>> npcGroup = getNpcGroup();

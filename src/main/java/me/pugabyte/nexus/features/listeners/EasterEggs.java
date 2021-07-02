@@ -5,7 +5,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
@@ -38,8 +38,8 @@ public class EasterEggs implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&d&lPIG > &fFucking traitor.");
-		SoundUtils.playSound(player, Sound.ENTITY_PIG_DEATH);
-		Tasks.wait(3, () -> SoundUtils.playSound(player, Sound.ENTITY_PIGLIN_DEATH));
+		new SoundBuilder(Sound.ENTITY_PIG_DEATH).receiver(player).play();
+		Tasks.wait(3, () -> new SoundBuilder(Sound.ENTITY_PIGLIN_DEATH).receiver(player).play());
 	}
 
 	@EventHandler

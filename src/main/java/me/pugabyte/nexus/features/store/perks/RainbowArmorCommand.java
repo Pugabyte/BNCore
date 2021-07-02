@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -108,7 +108,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MatchQuitEvent event) {
+	public void onMatchQuit(MinigamerQuitEvent event) {
 		start(event.getMinigamer().getPlayer());
 	}
 

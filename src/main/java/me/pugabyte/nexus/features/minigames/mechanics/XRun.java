@@ -19,12 +19,12 @@ public class XRun extends CheckpointMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.SUGAR);
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		event.setDeathMessage(null);
 		super.onDeath(event);
 	}

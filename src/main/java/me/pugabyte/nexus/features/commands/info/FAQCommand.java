@@ -58,8 +58,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("rankup")
-	void rank() {
+	@Path("(rank|ranks|rankup)")
+	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
 		send(json("&e[+] &3You start out as a &7Guest&3."));
 		send(json("&e[+] &3Play for 24 hours to become &fMember&3.").command("/hours").hover("&eClick here &3to view how long you've played"));

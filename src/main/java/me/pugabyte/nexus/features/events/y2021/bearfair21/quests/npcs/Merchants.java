@@ -4,8 +4,11 @@ import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
@@ -30,6 +33,7 @@ public class Merchants {
 	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET);
 	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT);
 	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK);
+	public static ItemBuilder traderCoupon = new ItemBuilder(Material.PAPER).name("&eEvent Token Coupon").lore("&3Amount: &e50");
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -40,23 +44,31 @@ public class Merchants {
 		if (Utils.isNullOrEmpty(trades))
 			return;
 
-		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().getName()))
-				.trades(trades)
-				.open(player);
+		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().name() + " " + bfMerchant.getBearFair21NPC().getNpcName()))
+			.trades(trades)
+			.open(player);
 	}
 
 	@AllArgsConstructor
 	public enum BFMerchant {
-		// Blue = Cheap, plenty of lapis ore
-		// Green = Expensive, requires travel to SDU island, and smelting
 		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					for (Material material : MaterialTag.DYES.getValues()) {
-						add(new TradeBuilder()
+						if (material.equals(Material.BLUE_DYE)) {
+							add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(material).amount(32)));
+						} else if (material.equals(Material.GREEN_DYE)) {
+							add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(material).amount(4)));
+						} else {
+							add(new TradeBuilder()
 								.result(goldNugget.clone().amount(1))
 								.ingredient(new ItemBuilder(material).amount(8)));
+						}
 					}
 				}};
 			}
@@ -66,8 +78,8 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(2))
-							.ingredient(new ItemBuilder(Material.BREAD).amount(64)));
+						.result(new ItemBuilder(Material.BREAD).amount(16))
+						.ingredient(goldNugget.clone().amount(2)));
 				}};
 			}
 		},
@@ -76,14 +88,14 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
+						.ingredient(goldNugget.clone().amount(2)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS))
+						.ingredient(goldNugget.clone().amount(2)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS))
+						.ingredient(goldNugget.clone().amount(2)));
 				}};
 			}
 		},
@@ -91,28 +103,36 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
+					if (user.getQuestStage_Lumberjack() == QuestStage.STARTED) {
+						add(new TradeBuilder()
+							.result(MainIsland.getReplacementSaw().clone())
+							.ingredient(new ItemBuilder(Material.IRON_BLOCK).amount(9))
+							.ingredient(goldBlock.clone().amount(1)));
+					}
+
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
+						.ingredient(goldNugget.clone().amount(4)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemStack(Material.LEATHER)));
+						.result(goldNugget.clone().amount(5))
+						.ingredient(new ItemBuilder(Material.DIAMOND).amount(2)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1)) // require wooden pickaxe as ingredient
-							.ingredient(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.IRON_INGOT).amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STONE_AXE).amount(1))  // require wooden axe as ingredient
-							.ingredient(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.COAL).amount(16)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))  // require iron pickaxe as ingredient
-							.ingredient(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.DIAMOND_PICKAXE).amount(1)));
+						.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1))
+						.ingredient(goldIngot.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1)) // require iron axe as ingredient
-							.ingredient(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.DIAMOND_AXE).amount(1)));
+						.result(new ItemBuilder(Material.STONE_AXE).amount(1))
+						.ingredient(goldIngot.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
+					add(new TradeBuilder()
+						.result(new ItemBuilder(Material.NETHERITE_INGOT).amount(1))
+						.ingredient(goldBlock.clone().amount(1)));
 				}};
 			}
 		},
@@ -136,11 +156,11 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemStack(Material.STRING))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemStack(Material.STRING))
+						.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(Material.STRING));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.STRING).amount(4)));
 				}};
 			}
 		},
@@ -149,11 +169,12 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(Quests.getBackPack(user.getPlayer()))
-							.ingredient(goldNugget.clone().amount(1)));
+						.maxUses(1)
+						.result(Quests.getBackPack(user.getPlayer()))
+						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
-							.result(new ItemStack(Material.ELYTRA))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemStack(Material.ELYTRA))
+						.ingredient(goldBlock.clone().amount(2)));
 				}};
 			}
 		},
@@ -162,17 +183,17 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.WOODEN_AXE).amount(1))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.WOODEN_AXE).amount(1))
+						.ingredient(goldNugget.clone().amount(2)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(BearFair21TreeType.OAK.getDrop().clone().amount(4)));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(BearFair21TreeType.OAK.getDrop().clone().amount(8)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.OAK_PLANKS).amount(16))); // oak amount * 4
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.OAK_PLANKS).amount(32))); // oak amount * 4
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.STICK).amount(32))); // plank amount * 2
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.STICK).amount(64))); // plank amount * 2
 				}};
 			}
 		},
@@ -181,32 +202,32 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.EGG))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.EGG))
+						.ingredient(goldIngot.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.EGG)));
+						.result(goldNugget.clone().amount(5))
+						.ingredient(new ItemBuilder(Material.EGG)));
 
-					if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
+					if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 						add(new TradeBuilder()
-								.result(MainIsland.bf_cake.clone())
-								.ingredient(new ItemBuilder(Material.CAKE).build())
-								.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
+							.result(MainIsland.getCakeItem().clone())
+							.ingredient(new ItemBuilder(Material.CAKE).build())
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
 					} else {
 						add(new TradeBuilder()
-								.result(goldNugget.clone().amount(1))
-								.ingredient(new ItemBuilder(Material.CAKE)));
+							.result(goldIngot.clone().amount(3))
+							.ingredient(new ItemBuilder(Material.CAKE)));
 						add(new TradeBuilder()
-								.result(goldNugget.clone().amount(1))
-								.ingredient(new ItemBuilder(Material.COCOA_BEANS)));
+							.result(goldNugget.clone().amount(2))
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8)));
 					}
 
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.COOKIE)));
+						.result(goldNugget.clone().amount(3))
+						.ingredient(new ItemBuilder(Material.COOKIE).amount(64)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.MILK_BUCKET)));
+						.result(goldNugget.clone().amount(3))
+						.ingredient(new ItemBuilder(Material.MILK_BUCKET)));
 				}};
 			}
 		},
@@ -215,20 +236,48 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
+						.ingredient(goldBlock.clone().amount(3)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
+						.ingredient(goldBlock.clone().amount(2)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
+						.ingredient(goldBlock.clone().amount(3)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
+						.ingredient(goldBlock.clone().amount(2)));
+					add(new TradeBuilder()
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LUCK_OF_THE_SEA, 3))
+						.ingredient(goldBlock.clone().amount(3)));
 				}};
 			}
-		};
+		},
+		TRADER(BearFair21NPC.TRADER) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return new ArrayList<>() {{
+					if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
+						add(new TradeBuilder()
+							.maxUses(1)
+							.result(traderCoupon.clone().amount(1))
+							.ingredient(goldBlock.clone().amount(1)));
+					}
+				}};
+			}
+		},
+		JAMES(BearFair21NPC.JAMES) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return new ArrayList<>() {{
+					add(new TradeBuilder()
+						.maxUses(1)
+						.result(MinigameNightIsland.getCarKey().build())
+						.ingredient(goldBlock.clone().amount(1)));
+				}};
+			}
+		},
+		;
 
 		@Getter
 		private final BearFair21NPC bearFair21NPC;

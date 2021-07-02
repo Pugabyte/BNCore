@@ -36,7 +36,7 @@ public class BearFairTalker extends Talker {
 			if (region.getId().equals(BearFair20.getRegion()))
 				return me.pugabyte.nexus.features.events.y2020.bearfair20.islands.IslandType.getFromLocation(location);
 			if (region.getId().equals(BearFair21.getRegion()))
-				return me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType.getFromLocation(location);
+				return me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType.get(location);
 		}
 		return null;
 	}

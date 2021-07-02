@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -35,7 +36,7 @@ public final class Splegg extends SpleefMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.EGG);
 	}
 
@@ -83,6 +84,14 @@ public final class Splegg extends SpleefMechanic {
 		if (blockHit == null) return;
 
 		breakBlock(minigamer.getMatch(), blockHit.getLocation());
+	}
+
+	@EventHandler
+	public void onProjectileCollide(ProjectileCollideEvent event) {
+		if (!(event.getCollidedWith() instanceof Player player)) return;
+		Minigamer minigamer = PlayerManager.get(player);
+		if (minigamer.isPlaying(this))
+			event.setCancelled(true);
 	}
 
 }

@@ -75,7 +75,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(40, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
+							Script.wait(40, "I can't find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I've lost it."),
 
 							Script.wait(80, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
@@ -101,8 +101,8 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait("You have it! Just in the nick of time. The ceremony shall now begin."),
 
-							Script.wait(80, "Light all the torches around Santa’s Workshop leading up to the tree using the ceremonial lighter, " +
-									"don’t forget the one at the base of the tree! You will be timed, so hurry!")
+							Script.wait(80, "Light all the torches around Santa's Workshop leading up to the tree using the ceremonial lighter, " +
+									"don't forget the one at the base of the tree! You will be timed, so hurry!")
 					);
 				case COMPLETE:
 					return Arrays.asList(
@@ -131,7 +131,7 @@ public enum QuestNPC {
 							Script.wait(getGreeting()),
 
 							Script.wait(40, "It's time for our annual tree lighting ceremony, but " + CINNAMON.getName() +
-									" still hasn’t returned with the Ceremonial Lighter!"),
+									" still hasn't returned with the Ceremonial Lighter!"),
 
 							Script.wait(120, "Would you mind finding her for me? She should be in the workshop.")
 					);
@@ -202,7 +202,7 @@ public enum QuestNPC {
 				return Arrays.asList(
 						Script.wait("Eh? What? Oh, right, lemme take the ear plugs out."),
 
-						Script.wait(80, "Sorry, we don’t have any flint or steel available right now but " +
+						Script.wait(80, "Sorry, we don't have any flint or steel available right now but " +
 								"you can certainly go grab your own."),
 
 						Script.wait(160, "Grab a sieve and a pick from this equipment stand. You will need " +
@@ -221,18 +221,18 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait("Since you’re already cleared for the mine, wanna do me a favor?"),
+							Script.wait("Since you're already cleared for the mine, wanna do me a favor?"),
 
 							Script.wait(80, "There's always a rush of last minute demands for materials by the workshop- " +
 									"things that need to be fixed, production that came up a little short."),
 
 							Script.wait(160, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
 
-							Script.wait(80, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
+							Script.wait(80, "If you bring me ingots and put them in this crate here, I'll see you get paid.")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait("If you bring me ingots and put them in this crate here, I’ll see you get paid.")
+							Script.wait("If you bring me ingots and put them in this crate here, I'll see you get paid.")
 					);
 			}
 
@@ -258,12 +258,12 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(40, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
+							Script.wait(40, "Hey kid, I need a favor! After last year's debacle with the sled, " +
 									"half of the Quality Assurance team was fired, and the other half have spent all year " +
-									"on making sure that the Sled won’t fall apart again."),
+									"on making sure that the Sled won't fall apart again."),
 
 							Script.wait(160, "But that's left just me to try and keep up with testing all the toys " +
-									"that come off the line. I’m way, way behind and Pugmas is coming fast."),
+									"that come off the line. I'm way, way behind and Pugmas is coming fast."),
 
 							Script.wait(160, "Think you can help an elf out? You might need to find a friend to help you, " +
 									"the games on the table there need to be tested before they can be added to the present piles."),
@@ -321,11 +321,11 @@ public enum QuestNPC {
 							Script.wait(40, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
 
-							Script.wait(160, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
+							Script.wait(160, "Don't tell Santa! Just help me out. Here in town is an ornament vendor, " +
 									"he trades different wood types that we need for the factory for spare pugmas ornaments."),
 
-							Script.wait(160, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
-									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you."),
+							Script.wait(160, "I'd just ask him for some extra myself, but he's mean and would tell Santa I " +
+									"lost the town's ornaments. If you bring me one of each of the 10 ornaments, I'll reward you."),
 
 							Script.wait(160, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
 					);
@@ -519,7 +519,7 @@ public enum QuestNPC {
 		List<String> greetings = Arrays.asList(
 				"Happy holidays!",
 				"Yuletide greetings!",
-				"Season’s greetings!",
+				"Season's greetings!",
 				"Happy New Year!",
 				"Merry Pugmas!");
 

@@ -139,7 +139,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		Location location = rainbowBeacon.getLocation();
 		AtomicInteger i = new AtomicInteger(0);
 		rainbowBeacon.setTaskId(Tasks.repeat(0, Time.SECOND, () -> {
-			if (!location.getBlock().getChunk().isLoaded())
+			if (!location.isChunkLoaded())
 				return;
 
 			if (location.getBlock().getRelative(BlockFace.DOWN).getType() != Material.BEACON) {

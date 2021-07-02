@@ -6,8 +6,8 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import org.bukkit.OfflinePlayer;
 
@@ -18,7 +18,7 @@ public class MessageCommand extends CustomCommand {
 	public MessageCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
-		chatter = new ChatService().get(player());
+		chatter = new ChatterService().get(player());
 	}
 
 	@Path("<player> [message...]")
@@ -26,7 +26,7 @@ public class MessageCommand extends CustomCommand {
 		if (isSelf(to))
 			error("You cannot message yourself");
 
-		PrivateChannel dm = new PrivateChannel(chatter, new ChatService().get(to));
+		PrivateChannel dm = new PrivateChannel(chatter, new ChatterService().get(to));
 		if (isNullOrEmpty(message))
 			chatter.setActiveChannel(dm);
 		else

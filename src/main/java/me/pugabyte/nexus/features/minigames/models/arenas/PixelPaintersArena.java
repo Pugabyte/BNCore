@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class PixelPaintersArena extends Arena {
 	}
 
 	@Override
-	public String getRegionBaseName() {
+	public @NotNull String getRegionBaseName() {
 		return "pixelpainters";
 	}
 

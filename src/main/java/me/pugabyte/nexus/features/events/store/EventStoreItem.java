@@ -51,7 +51,7 @@ public enum EventStoreItem {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
-			return new ItemBuilder(Nexus.getHeadAPI().getItemHead("2669"));
+			return ItemBuilder.fromHeadId("2669");
 		}
 
 		@Override
@@ -63,7 +63,7 @@ public enum EventStoreItem {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
-			return new ItemBuilder(Nexus.getHeadAPI().getItemHead("537"));
+			return ItemBuilder.fromHeadId("537");
 		}
 
 		@Override

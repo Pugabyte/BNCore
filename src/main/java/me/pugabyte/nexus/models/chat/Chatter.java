@@ -1,5 +1,9 @@
 package me.pugabyte.nexus.models.chat;
 
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +14,9 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.features.chat.translator.Language;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ChannelConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -24,10 +31,13 @@ import static me.pugabyte.nexus.features.chat.Chat.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
 @Data
+@Entity(value = "chatter", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Converters({UUIDConverter.class, ChannelConverter.class, PrivateChannelConverter.class, PublicChannelConverter.class})
 public class Chatter implements PlayerOwnedObject {
+	@Id
 	@NonNull
 	private UUID uuid;
 	private Channel activeChannel;
@@ -62,6 +72,7 @@ public class Chatter implements PlayerOwnedObject {
 			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
+		save();
 	}
 
 	public boolean canJoin(PublicChannel channel) {
@@ -100,8 +111,13 @@ public class Chatter implements PlayerOwnedObject {
 	private void fixChannelSets() {
 		if (joinedChannels == null)
 			joinedChannels = new HashSet<>();
+		else
+			joinedChannels.removeIf(Objects::isNull);
+
 		if (leftChannels == null)
 			leftChannels = new HashSet<>();
+		else
+			joinedChannels.removeIf(Objects::isNull);
 	}
 
 	public void join(PublicChannel channel) {
@@ -115,6 +131,7 @@ public class Chatter implements PlayerOwnedObject {
 		fixChannelSets();
 		leftChannels.remove(channel);
 		joinedChannels.add(channel);
+		save();
 	}
 
 	public void leave(PublicChannel channel) {
@@ -125,6 +142,7 @@ public class Chatter implements PlayerOwnedObject {
 
 		if (channel.equals(activeChannel))
 			findNewActiveChannel();
+		save();
 	}
 
 	private void findNewActiveChannel() {
@@ -164,6 +182,10 @@ public class Chatter implements PlayerOwnedObject {
 		if (o == null || getClass() != o.getClass()) return false;
 		Chatter chatter = (Chatter) o;
 		return Objects.equals(getOfflinePlayer().getUniqueId(), chatter.getOfflinePlayer().getUniqueId());
+	}
+
+	private void save() {
+		new ChatterService().queueSave(5, this);
 	}
 
 }

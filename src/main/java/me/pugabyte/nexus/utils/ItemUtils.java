@@ -1,8 +1,10 @@
 package me.pugabyte.nexus.utils;
 
 import me.lexikiq.HasPlayer;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -24,9 +26,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+
 public class ItemUtils {
+
+	@Contract("_, null -> false; null, _ -> false")
+	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
+		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (itemStack1.getType() != itemStack2.getType()) return false;
+		Function<ItemStack, String> name = item -> stripColor(item.getItemMeta().getDisplayName());
+		return name.apply(itemStack1).equals(name.apply(itemStack2));
+	}
 
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {
 		if (itemStack1.getType() != itemStack2.getType())
@@ -41,10 +54,8 @@ public class ItemUtils {
 		if (!Objects.equals(itemMeta1.getLore(), itemMeta2.getLore()))
 			return false;
 
-		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData()) {
-			if (itemMeta1.getCustomModelData() != itemMeta2.getCustomModelData())
-				return false;
-		}
+		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
+			return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
 
 		return true;
 	}
@@ -279,6 +290,10 @@ public class ItemUtils {
 		return true;
 	}
 
+	public static ItemStack getItem(Block block) {
+		return block.getDrops().iterator().next();
+	}
+
 	public static class ItemStackComparator implements Comparator<ItemStack> {
 		@Override
 		public int compare(ItemStack a, ItemStack b) {
@@ -294,7 +309,12 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			return result;
 		}
+	}
 
+	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
+		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
+		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}
 
 	/**
